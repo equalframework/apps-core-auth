@@ -12,7 +12,8 @@
     background: url('/assets/img/brand/logo.svg');
     height: 100px;
     width: 100px;
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 mat-card {
