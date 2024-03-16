@@ -15,21 +15,24 @@ import { AuthService } from 'sb-shared-lib';
 export class AppRootComponent implements OnInit {
 
     public ready: boolean = false;
+    public redirect_to: string = '/apps';
 
     constructor(private auth: AuthService, private router: Router) {}
 
-
     public async ngOnInit() {
+        // retrieve redirect_to param, if provided
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if(urlParams.has('redirect_to')) {
+            this.redirect_to = decodeURIComponent(<string> urlParams.get('redirect_to'));
+        }
 
         // listen to authentication events
         this.auth.getObservable().subscribe( (user:any) => {
-            console.log('received user object', user);
-
-            if(user.id > 0) {
-                // user is already authenticated : go to root page (Apps)
-                window.location.href = '/apps';
+            if(user.hasOwnProperty('id') && user.id > 0) {
+                // user is authenticated : redirect go target page (Apps)
+                window.location.href = this.redirect_to;
             }
-
         });
 
         // request authentication
