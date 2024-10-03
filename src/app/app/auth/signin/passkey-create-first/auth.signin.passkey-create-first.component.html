@@ -12,13 +12,13 @@
                         <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                         {{'AUTH_SIGNIN_ACTION_CREATE_PASSKEY' | translate}}
                     </button>
-                    <!-- <button *ngIf="false" mat-flat-button >Register</button> -->
                 </div>
 
                 <div class="options">
                     <span class="option" (click)="onIgnoreAndContinue()">{{'AUTH_SIGNIN_ACTION_IGNORE_AND_CONTINUE' | translate}}</span>
                 </div>
 
+                <mat-checkbox formControlName="dont_show_again">{{'AUTH_SIGNIN_DONT_SHOW_AGAIN' | translate}}</mat-checkbox>
             </form>
         </mat-card-content>
     </mat-card>

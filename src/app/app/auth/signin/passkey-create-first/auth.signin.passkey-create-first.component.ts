@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
-import { ApiService } from 'sb-shared-lib';
+import { ApiService, AuthService, EnvService } from 'sb-shared-lib';
 import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
 
@@ -14,22 +14,45 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
 
     public form: FormGroup;
     public loading = false;
+    public submitted: boolean = false;
     public user_sign_in_info: UserSignInInfo|null = null;
 
     constructor(
+        private formBuilder: FormBuilder,
         private signIn: SignInService,
-        private api: ApiService
+        private api: ApiService,
+        private auth: AuthService,
+        private env: EnvService
     ) {
         this.form = new FormGroup({});
+    }
+
+    public get f() {
+        return this.form.controls;
     }
 
     public ngOnInit() {
         this.signIn.user_sign_in_info$.subscribe((user_sign_in_info) => {
             this.user_sign_in_info = user_sign_in_info;
         });
+
+        this.setUpForm();
+    }
+
+    private setUpForm() {
+        this.form = <FormGroup>this.formBuilder.group({
+            dont_show_again: [false]
+        });
+
+        this.form.get('dont_show_again').valueChanges.subscribe( () => {
+            this.submitted = false;
+        });
     }
 
     public async onSubmit() {
+        this.submitted = true;
+        this.loading = true;
+
         const options = await this.api.fetch('/?get=core_user_passkey-register-options', { login: this.user_sign_in_info.username });
 
         const registerToken = options.register_token;
@@ -54,9 +77,60 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
         catch(e) {
             console.log(e);
         }
+
+        this.loading = false;
     }
 
-    public onIgnoreAndContinue() {
+    public async onIgnoreAndContinue() {
+        if(this.f.dont_show_again) {
+            await this.updateProposeFirstPasskeyCreationSettingValue(false);
+        }
+
         this.signIn.redirectAfterAuthenticate();
+    }
+
+    private async updateProposeFirstPasskeyCreationSettingValue(value: boolean) {
+        let settings_domain = [
+            ['package', '=', 'core'],
+            ['section', '=', 'auth'],
+            ['code', '=', 'propose_first_passkey_creation'],
+        ];
+
+        const settings = await this.api.collect('core\\setting\\Setting', settings_domain, ['id']);
+        if(settings.length) {
+            const env = await this.env.getEnv();
+
+            const setting = settings[0];
+            const setting_value_domain = [
+                ['setting_id', '=', setting.id],
+                ['user_id', '=', this.auth.user.id]
+            ];
+
+            const settingValues = await this.api.collect('core\\setting\\SettingValue', setting_value_domain, ['id']);
+            if(settingValues.length) {
+                const settingValue = settingValues[0];
+
+                this.api.update(
+                    'core\\setting\\SettingValue',
+                    [settingValue.id],
+                    { value: value ? '1' : '0' },
+                    env.lang
+                );
+            }
+            else {
+                this.api.create(
+                    'core\\setting\\SettingValue',
+                    {
+                        setting_id: setting.id,
+                        name: 'core.auth.propose_first_passkey_creation',
+                        value: value ? '1' : '0'
+                    },
+                    env.lang
+                );
+            }
+        }
+        else {
+            console.error('Setting core.auth.propose_first_passkey_creation does not exist.')
+        }
     }
 }
