@@ -95,7 +95,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
         let settings_domain = [
             ['package', '=', 'core'],
             ['section', '=', 'auth'],
-            ['code', '=', 'propose_first_passkey_creation'],
+            ['code', '=', 'propose_passkey_creation'],
         ];
 
         const settings = await this.api.collect('core\\setting\\Setting', settings_domain, ['id']);
@@ -124,7 +124,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
                     'core\\setting\\SettingValue',
                     {
                         setting_id: setting.id,
-                        name: 'core.auth.propose_first_passkey_creation',
+                        name: 'core.auth.propose_passkey_creation',
                         value: value ? '1' : '0'
                     },
                     env.lang
@@ -132,7 +132,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
             }
         }
         else {
-            console.error('Setting core.auth.propose_first_passkey_creation does not exist.')
+            console.error('Setting core.auth.propose_passkey_creation does not exist.')
         }
     }
 }
