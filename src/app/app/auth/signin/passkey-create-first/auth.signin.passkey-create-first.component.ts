@@ -82,7 +82,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
     }
 
     public async onIgnoreAndContinue() {
-        if(this.f.dont_show_again) {
+        if(this.f.dont_show_again.value) {
             await this.updateProposeFirstPasskeyCreationSettingValue(false);
         }
 
