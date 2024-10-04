@@ -14,6 +14,13 @@
                     </button>
                 </div>
 
+                <div class="messages" *ngIf="create_passkey_error">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_PASSKEY_CREATE' | translate}}</span></div>
+                </div>
+                <div class="messages" *ngIf="server_error">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>
+                </div>
+
                 <div class="options">
                     <span class="option" (click)="onIgnoreAndContinue()">{{'AUTH_SIGNIN_ACTION_IGNORE_AND_CONTINUE' | translate}}</span>
                 </div>

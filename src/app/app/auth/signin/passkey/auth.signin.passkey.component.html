@@ -15,10 +15,10 @@
                     <!-- <button *ngIf="false" mat-flat-button >Register</button> -->
                 </div>
 
-                <div class="messages" *ngIf="submitted && signin_error">
-                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_INVALID_USERNAME_OR_PASSWORD' | translate}}</span></div>
+                <div class="messages" *ngIf="signin_error">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_PASSKEY_AUTH' | translate}}</span></div>
                 </div>
-                <div class="messages" *ngIf="submitted && server_error">
+                <div class="messages" *ngIf="server_error">
                     <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>
                 </div>
 

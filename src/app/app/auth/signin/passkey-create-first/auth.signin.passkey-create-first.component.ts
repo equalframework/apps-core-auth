@@ -14,7 +14,8 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
 
     public form: FormGroup;
     public loading = false;
-    public submitted: boolean = false;
+    public create_passkey_error: boolean = false;
+    public server_error: boolean = false;
     public user_sign_in_info: UserSignInInfo|null = null;
 
     constructor(
@@ -43,14 +44,9 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
         this.form = <FormGroup>this.formBuilder.group({
             dont_show_again: [false]
         });
-
-        this.form.get('dont_show_again').valueChanges.subscribe( () => {
-            this.submitted = false;
-        });
     }
 
     public async onSubmit() {
-        this.submitted = true;
         this.loading = true;
 
         const options = await this.api.fetch('/?get=core_user_passkey-register-options', { login: this.user_sign_in_info.username });
@@ -60,22 +56,28 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
 
         this.signIn.recursiveBase64StrToArrayBuffer(options);
 
-        // TODO: handle error here
-        const credential: any = await navigator.credentials.create(options);
-
         try {
-            await this.api.call('/?do=core_user_passkey-register', {
-                register_token: registerToken,
-                transports: credential.response.getTransports ? credential.response.getTransports() : null,
-                client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
-                attestation_object: credential.response.attestationObject ? this.signIn.arrayBufferToBase64(credential.response.attestationObject) : null
-            });
+            const credential: any = await navigator.credentials.create(options);
 
-            // auth.authenticate
-            this.signIn.redirectAfterAuthenticate();
+            try {
+                await this.api.call('/?do=core_user_passkey-register', {
+                    register_token: registerToken,
+                    transports: credential.response.getTransports ? credential.response.getTransports() : null,
+                    client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
+                    attestation_object: credential.response.attestationObject ? this.signIn.arrayBufferToBase64(credential.response.attestationObject) : null
+                });
+
+                // auth.authenticate
+                this.signIn.redirectAfterAuthenticate();
+            }
+            catch(e) {
+                console.log(e);
+                this.server_error = true;
+            }
         }
         catch(e) {
             console.log(e);
+            this.create_passkey_error = true;
         }
 
         this.loading = false;
