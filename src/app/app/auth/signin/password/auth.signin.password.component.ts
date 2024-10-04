@@ -116,7 +116,7 @@ export class AuthSigninPasswordComponent implements OnInit {
     }
 
     public onRecover() {
-        this.router.navigate(['/recover']);
+        this.router.navigate(['/recover/password']);
     }
 
     public onSwitchUser() {

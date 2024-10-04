@@ -15,7 +15,8 @@ import { AppRootComponent } from './app.root.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 
-import { AuthRecoverComponent } from './app/auth/recover/auth.recover.component';
+import { AuthRecoverPasswordComponent } from './app/auth/recover/password/auth.recover.password.component';
+import { AuthRecoverUsernameComponent } from './app/auth/recover/username/auth.recover.username.component';
 import { AuthSigninComponent } from './app/auth/signin/auth.signin.component';
 import { AuthSigninPasswordComponent } from './app/auth/signin/password/auth.signin.password.component';
 import { AuthSigninPasskeyComponent } from './app/auth/signin/passkey/auth.signin.passkey.component';
@@ -27,7 +28,8 @@ import { AuthSignupSentComponent } from './app/auth/signup/sent/auth.signup.sent
 @NgModule({
     declarations: [
         AppRootComponent,
-        AuthRecoverComponent,
+        AuthRecoverPasswordComponent,
+        AuthRecoverUsernameComponent,
         AuthSigninComponent,
         AuthSigninPasswordComponent,
         AuthSigninPasskeyComponent,

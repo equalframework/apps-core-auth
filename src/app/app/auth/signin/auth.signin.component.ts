@@ -104,7 +104,7 @@ export class AuthSigninComponent implements OnInit {
     }
 
     public onRecover() {
-        this.router.navigate(['/recover']);
+        this.router.navigate(['/recover/username']);
     }
 
     public onRegister() {
