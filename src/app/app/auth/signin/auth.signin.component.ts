@@ -57,7 +57,7 @@ export class AuthSigninComponent implements OnInit {
         const username = this.f.username.value;
 
         try {
-            const user_sign_in_info = await this.api.fetch('/?get=user_signin-info', { login: username }) as UserSignInInfo;
+            const user_sign_in_info = await this.api.fetch('/?get=signin-info', { login: username }) as UserSignInInfo;
 
             // By setting user sign in info, the SignInService auto redirect to 'signin/passkey' or 'signin/password' to auth final step
             this.signIn.setUserSignInInfo(user_sign_in_info);
