@@ -74,17 +74,17 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
                     this.signIn.redirectAfterAuthenticate();
                 }
                 catch(e) {
-                    console.log(e);
+                    console.error('Error during server registration call:', e);
                     this.server_error = true;
                 }
             }
             catch(e) {
-                console.log(e);
+                console.error('WebAuthn credential creation error:', e);
                 this.create_passkey_error = true;
             }
         }
         catch(e) {
-            console.log(e);
+            console.error('Error fetching passkey authentication options:', e);
             this.server_error = true;
         }
 

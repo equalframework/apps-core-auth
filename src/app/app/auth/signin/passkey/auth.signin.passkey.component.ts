@@ -61,17 +61,17 @@ export class AuthSigninPasskeyComponent implements OnInit {
                     // SignIn service should now redirect to /apps
                 }
                 catch(e) {
-                    console.log(e);
+                    console.error('Error during server authentication call:', e);
                     this.server_error = true;
                 }
             }
             catch(e) {
-                console.log(e);
+                console.error('WebAuthn credential retrieval error:', e);
                 this.signin_error = true;
             }
         }
         catch(e) {
-            console.log(e);
+            console.error('Error fetching passkey authentication options:', e);
             this.server_error = true;
         }
 
