@@ -33,10 +33,26 @@ export class AppRootComponent implements OnInit {
      * Extract and set redirect_to in SignInService, it will be used to redirect the user when he is correctly authenticated
      */
     private handleRedirectParam(): void {
-        const urlParams = new URLSearchParams(window.location.search);
+        let redirect_to: string|null = null;
 
+        const urlParams = new URLSearchParams(window.location.search);
         if(urlParams.has('redirect_to')) {
-            this.signIn.setRedirectTo(<string> urlParams.get('redirect_to'));
+            redirect_to = urlParams.get('redirect_to');
+        }
+        else {
+            const hash = window.location.hash;
+
+            const query_string_index = hash.indexOf('?');
+            if (query_string_index !== -1) {
+                const query_params = hash.substring(query_string_index + 1);
+                const url_params = new URLSearchParams(query_params);
+
+                redirect_to = url_params.get('redirect_to');
+            }
+        }
+
+        if(redirect_to) {
+            this.signIn.setRedirectTo(redirect_to);
         }
     }
 
