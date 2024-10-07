@@ -35,38 +35,44 @@ export class AuthSigninPasskeyComponent implements OnInit {
         this.server_error = false;
         this.loading = true;
 
-        const options = await this.api.fetch('/?get=core_user_passkey-auth-options', { login: this.user_sign_in_info.username });
-
-        const authToken = options.auth_token;
-        delete options.auth_token;
-
-        this.signIn.recursiveBase64StrToArrayBuffer(options);
-
         try {
-            const credential: any = await navigator.credentials.get(options);
+            const options = await this.api.fetch('/?get=core_user_passkey-auth-options', { login: this.user_sign_in_info.username });
+
+            const authToken = options.auth_token;
+            delete options.auth_token;
+
+            this.signIn.recursiveBase64StrToArrayBuffer(options);
 
             try {
-                await this.api.call('/?do=core_user_passkey-auth', {
-                    auth_token: authToken,
-                    credential_id: credential.rawId ? this.signIn.arrayBufferToBase64(credential.rawId) : null,
-                    client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
-                    authenticator_data: credential.response.authenticatorData ? this.signIn.arrayBufferToBase64(credential.response.authenticatorData) : null,
-                    signature: credential.response.signature ? this.signIn.arrayBufferToBase64(credential.response.signature) : null,
-                    user_handle: credential.response.userHandle ? this.signIn.arrayBufferToBase64(credential.response.userHandle) : null
-                });
+                const credential: any = await navigator.credentials.get(options);
 
-                // success: we should be able to authenticate
-                this.auth.authenticate();
-                // SignIn service should now redirect to /apps
+                try {
+                    await this.api.call('/?do=core_user_passkey-auth', {
+                        auth_token: authToken,
+                        credential_id: credential.rawId ? this.signIn.arrayBufferToBase64(credential.rawId) : null,
+                        client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
+                        authenticator_data: credential.response.authenticatorData ? this.signIn.arrayBufferToBase64(credential.response.authenticatorData) : null,
+                        signature: credential.response.signature ? this.signIn.arrayBufferToBase64(credential.response.signature) : null,
+                        user_handle: credential.response.userHandle ? this.signIn.arrayBufferToBase64(credential.response.userHandle) : null
+                    });
+
+                    // success: we should be able to authenticate
+                    this.auth.authenticate();
+                    // SignIn service should now redirect to /apps
+                }
+                catch(e) {
+                    console.log(e);
+                    this.server_error = true;
+                }
             }
             catch(e) {
                 console.log(e);
-                this.server_error = true;
+                this.signin_error = true;
             }
         }
         catch(e) {
             console.log(e);
-            this.signin_error = true;
+            this.server_error = true;
         }
 
         this.loading = false;

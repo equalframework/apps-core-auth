@@ -47,37 +47,45 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
     }
 
     public async onSubmit() {
+        this.create_passkey_error = false;
+        this.server_error = false;
         this.loading = true;
 
-        const options = await this.api.fetch('/?get=core_user_passkey-register-options', { login: this.user_sign_in_info.username });
-
-        const registerToken = options.register_token;
-        delete options.register_token;
-
-        this.signIn.recursiveBase64StrToArrayBuffer(options);
-
         try {
-            const credential: any = await navigator.credentials.create(options);
+            const options = await this.api.fetch('/?get=core_user_passkey-register-options', { login: this.user_sign_in_info.username });
+
+            const registerToken = options.register_token;
+            delete options.register_token;
+
+            this.signIn.recursiveBase64StrToArrayBuffer(options);
 
             try {
-                await this.api.call('/?do=core_user_passkey-register', {
-                    register_token: registerToken,
-                    transports: credential.response.getTransports ? credential.response.getTransports() : null,
-                    client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
-                    attestation_object: credential.response.attestationObject ? this.signIn.arrayBufferToBase64(credential.response.attestationObject) : null
-                });
+                const credential: any = await navigator.credentials.create(options);
 
-                // auth.authenticate
-                this.signIn.redirectAfterAuthenticate();
+                try {
+                    await this.api.call('/?do=core_user_passkey-register', {
+                        register_token: registerToken,
+                        transports: credential.response.getTransports ? credential.response.getTransports() : null,
+                        client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
+                        attestation_object: credential.response.attestationObject ? this.signIn.arrayBufferToBase64(credential.response.attestationObject) : null
+                    });
+
+                    // auth.authenticate
+                    this.signIn.redirectAfterAuthenticate();
+                }
+                catch(e) {
+                    console.log(e);
+                    this.server_error = true;
+                }
             }
             catch(e) {
                 console.log(e);
-                this.server_error = true;
+                this.create_passkey_error = true;
             }
         }
         catch(e) {
             console.log(e);
-            this.create_passkey_error = true;
+            this.server_error = true;
         }
 
         this.loading = false;
