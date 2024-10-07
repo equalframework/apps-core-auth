@@ -19,15 +19,7 @@ export class SignInService {
         private router: Router
     ) {
         this.user_sign_in_info$.subscribe((user_sign_in_info) => {
-            if(user_sign_in_info === null) {
-                this.router.navigate(['/signin']);
-            }
-            else {
-                this.router.navigate([
-                    user_sign_in_info.has_passkey ? '/signin/passkey' : '/signin/password'
-                ]);
-            }
-
+            this.redirectIfSignInRoute(user_sign_in_info);
             this.user_sign_in_info = user_sign_in_info;
         });
 
@@ -52,6 +44,28 @@ export class SignInService {
                 }
             }
         });
+    }
+
+    /**
+     * Redirects user:
+     *   - to "signin" route                              -> if user has not entered his/her username and tries to access password or passkey pages
+     *   - to "signin/passkey" route                      -> if user has entered his/her username and has a passkey
+     *   - to "signin/password" route                     -> if user has entered his/her username and hasn't a passkey
+     *  Only redirects if the current route is related to signin (not recover, register, ...)
+     */
+    private redirectIfSignInRoute(user_sign_in_info: UserSignInInfo|null) {
+        let hash = window.location.hash;
+        const route = hash.substring(2);
+        if(!route.length || route.startsWith('signin')) {
+            if(user_sign_in_info === null) {
+                this.router.navigate(['/signin']);
+            }
+            else {
+                this.router.navigate([
+                    user_sign_in_info.has_passkey ? '/signin/passkey' : '/signin/password'
+                ]);
+            }
+        }
     }
 
     public setRedirectTo(redirect_to: string) {
