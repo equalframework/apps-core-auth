@@ -1,0 +1,35 @@
+<div class="container">
+    <mat-card>
+        <mat-card-header>
+            <div mat-card-avatar><mat-icon>check</mat-icon></div>
+            <mat-card-title>{{'AUTH_SIGNIN_TITLE_CONNECTED' | translate}}</mat-card-title>
+            <mat-card-subtitle>{{user_sign_in_info.username}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                <div class="actions">
+                    <button mat-flat-button [class.spinner]="loading"  [disabled]="loading" color="primary">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        {{'AUTH_SIGNIN_ACTION_CREATE_PASSKEY' | translate}}
+                    </button>
+                </div>
+
+                <div class="messages" *ngIf="create_passkey_error">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_PASSKEY_CREATE' | translate}}</span></div>
+                </div>
+                <div class="messages" *ngIf="server_error">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>
+                </div>
+
+                <div class="options">
+                    <span class="option" (click)="onIgnoreAndContinue()">{{'AUTH_SIGNIN_ACTION_IGNORE_AND_CONTINUE' | translate}}</span>
+                </div>
+
+                <mat-checkbox formControlName="dont_show_again">{{'AUTH_SIGNIN_DONT_SHOW_AGAIN' | translate}}</mat-checkbox>
+            </form>
+        </mat-card-content>
+    </mat-card>
+    <div>
+        <div class="sb-logo"></div>
+    </div>
+</div>

@@ -2,27 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { ApiService } from 'sb-shared-lib';
-import { SignInService } from '../../../services/sign-in.service';
-import { UserSignInInfo } from '../../../type';
+import { AuthService } from 'sb-shared-lib';
+import { SignInService } from '../../../../services/sign-in.service';
+import { UserSignInInfo } from '../../../../type';
 
 @Component({
-    selector: 'auth-signin',
-    templateUrl: 'auth.signin.component.html',
-    styleUrls: ['auth.signin.component.scss']
+    selector: 'auth-signin-password',
+    templateUrl: 'auth.signin.password.component.html',
+    styleUrls: ['auth.signin.password.component.scss']
 })
-export class AuthSigninComponent implements OnInit {
+export class AuthSigninPasswordComponent implements OnInit {
 
     public form: FormGroup;
     public loading: boolean = false;
     public submitted: boolean = false;
+    public hidepass: boolean = true;
     public signin_error: boolean = false;
     public server_error: boolean = false;
+    public user_sign_in_info: UserSignInInfo|null = null;
 
     constructor(
         private formBuilder: FormBuilder,
+        private auth: AuthService,
         private router: Router,
-        private api: ApiService,
         private signIn: SignInService
     ) {
         this.form = new FormGroup({});
@@ -33,13 +35,20 @@ export class AuthSigninComponent implements OnInit {
         return this.form.controls;
     }
 
-    public ngOnInit() {
-        // setup the form
-        this.form = <FormGroup>this.formBuilder.group({
-            username: ['', [Validators.required]]
+    public async ngOnInit() {
+        this.signIn.user_sign_in_info$.subscribe((user_sign_in_info) => {
+            this.user_sign_in_info = user_sign_in_info;
         });
 
-        this.form.get('username').valueChanges.subscribe( () => {
+        this.setUpForm();
+    }
+
+    private setUpForm() {
+        this.form = <FormGroup>this.formBuilder.group({
+            password: ['', Validators.required]
+        });
+
+        this.form.get('password').valueChanges.subscribe( () => {
             this.submitted = false;
         });
     }
@@ -54,13 +63,17 @@ export class AuthSigninComponent implements OnInit {
         this.submitted = true;
         this.loading = true;
 
-        const username = this.f.username.value;
-
         try {
-            const user_sign_in_info = await this.api.fetch('/?get=signin-info', { login: username }) as UserSignInInfo;
+            const data = await this.auth.signIn(this.user_sign_in_info.username, this.f.password.value);
 
-            // By setting user sign in info, the SignInService auto redirect to 'signin/passkey' or 'signin/password' to auth final step
-            this.signIn.setUserSignInInfo(user_sign_in_info);
+            if(this.user_sign_in_info && !this.user_sign_in_info.has_passkey && this.user_sign_in_info.propose_passkey_creation) {
+                this.router.navigate(['signin/passkey-create-first']);
+            }
+            else {
+                // success: we should be able to authenticate
+                this.auth.authenticate();
+                // SignIn service should now redirect to /apps
+            }
         }
         catch(response:any) {
             console.log(response);
@@ -97,17 +110,17 @@ export class AuthSigninComponent implements OnInit {
                     this.signin_error = true;
                 }
             }
-
             // there was an error: stop loading indicator
             this.loading = false;
         }
     }
 
     public onRecover() {
-        this.router.navigate(['/recover/username']);
+        this.router.navigate(['/recover/password']);
     }
 
-    public onRegister() {
-        this.router.navigate(['/signup']);
+    public onSwitchUser() {
+        // By setting user sign in info to null, the SignInService auto redirect to 'signin' to re-enter login
+        this.signIn.setUserSignInInfo(null);
     }
 }

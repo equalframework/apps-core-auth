@@ -1,0 +1,36 @@
+<div class="container">
+    <mat-card>
+        <mat-card-header>
+            <div mat-card-avatar><mat-icon>login</mat-icon></div>
+            <mat-card-title>{{'AUTH_SIGNIN_TITLE_WELCOME' | translate}}</mat-card-title>
+            <mat-card-subtitle>{{user_sign_in_info.username}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+            <form (ngSubmit)="onSubmit()">
+                <div class="actions">
+                    <button mat-flat-button [class.spinner]="loading"  [disabled]="loading" color="primary">
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                        {{'AUTH_SIGNIN_ACTION_PASSKEY_LOGIN' | translate}}
+                    </button>
+                    <!-- <button *ngIf="false" mat-flat-button >Register</button> -->
+                </div>
+
+                <div class="messages" *ngIf="signin_error">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_PASSKEY_AUTH' | translate}}</span></div>
+                </div>
+                <div class="messages" *ngIf="server_error">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>
+                </div>
+
+                <div class="options">
+                    <span class="option" (click)="onTryAnotherWay()">{{'AUTH_SIGNIN_ACTION_TRY_ANOTHER_WAY' | translate}}</span>
+                    <span class="option" (click)="onSwitchUser()">{{'AUTH_SIGNIN_ACTION_SWITCH_USER' | translate}}</span>
+                </div>
+
+            </form>
+        </mat-card-content>
+    </mat-card>
+    <div>
+        <div class="sb-logo"></div>
+    </div>
+</div>

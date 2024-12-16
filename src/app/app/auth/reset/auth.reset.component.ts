@@ -88,7 +88,7 @@ export class AuthResetComponent implements OnInit {
             const data = await this.api.fetch('/?do=user_pass-update', {token: this.token, password: this.f.password.value, confirm: this.f.confirm.value});
             // success: we should be able to authenticate
             this.auth.authenticate();
-            // AppRootComponent should now redirect to /apps
+            // SignIn service should now redirect to /apps
         }
         catch(response:any) {
             console.log(response);

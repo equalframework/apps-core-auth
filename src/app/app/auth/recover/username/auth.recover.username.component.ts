@@ -1,26 +1,24 @@
-import { Component, OnInit, Input  } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { AuthService } from 'sb-shared-lib';
-
+import { ApiService } from 'sb-shared-lib';
 
 @Component({
-  selector: 'auth-recover',
-  templateUrl: 'auth.recover.component.html',
-  styleUrls: ['auth.recover.component.scss']
+  selector: 'auth-recover-username',
+  templateUrl: 'auth.recover.username.component.html',
+  styleUrls: ['auth.recover.username.component.scss']
 })
-export class AuthRecoverComponent implements OnInit {
+export class AuthRecoverUsernameComponent implements OnInit {
+
     public form: FormGroup;
     public loading = false;
     public submitted = false;
 
-
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
-        private auth: AuthService
+        private api: ApiService
     ) {
         this.form = new FormGroup({});
     }
@@ -30,7 +28,7 @@ export class AuthRecoverComponent implements OnInit {
         return this.form.controls;
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.form = <FormGroup>this.formBuilder.group({
             email: ['', [Validators.required, Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')]]
         });
@@ -43,7 +41,7 @@ export class AuthRecoverComponent implements OnInit {
 
     public async onSubmit() {
         console.log('onSubmit');
-        // prevent sumit for invalid form
+        // prevent submit for invalid form
         if (this.form.invalid) {
             return;
         }
@@ -53,7 +51,7 @@ export class AuthRecoverComponent implements OnInit {
 
         try {
             console.log('sending request');
-            const data = await this.auth.passRecover(this.f.email.value);
+            const data = await this.api.fetch('/?do=user_username-recover', { email: this.f.email.value });
             this.loading = false;
         }
         catch(response:any) {
@@ -61,8 +59,8 @@ export class AuthRecoverComponent implements OnInit {
                 let code = Object.keys(response.error['errors'])[0];
                 let msg = response.error['errors'][code];
                 console.log({
-                code: code,
-                message: msg
+                    code: code,
+                    message: msg
                 });
             }
             this.loading = false;
