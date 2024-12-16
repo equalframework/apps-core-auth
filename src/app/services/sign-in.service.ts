@@ -26,7 +26,7 @@ export class SignInService {
         this.auth.getObservable().subscribe((user: any) => {
             const is_user_authenticated = user?.id > 0;
             const should_not_propose_to_create_passkey =
-                this.user_sign_in_info === null || this.user_sign_in_info.has_passkey || !this.user_sign_in_info.propose_passkey_creation;
+                this.user_sign_in_info === null || this.user_sign_in_info.has_passkey || !this.user_sign_in_info.passkey_creation;
 
             if(is_user_authenticated && should_not_propose_to_create_passkey) {
                 this.redirectAfterAuthenticate();

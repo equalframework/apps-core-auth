@@ -63,7 +63,7 @@ export class AuthSigninComponent implements OnInit {
             this.signIn.setUserSignInInfo(user_sign_in_info);
         }
         catch(response:any) {
-            console.log(response);
+            console.debug(response);
 
             try {
                 if(response.hasOwnProperty('status')) {
