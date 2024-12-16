@@ -102,7 +102,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
     private async updateProposeFirstPasskeyCreationSettingValue(value: boolean) {
         let settings_domain = [
             ['package', '=', 'core'],
-            ['section', '=', 'auth'],
+            ['section', '=', 'security'],
             ['code', '=', 'passkey_creation'],
         ];
 
@@ -132,7 +132,8 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
                     'core\\setting\\SettingValue',
                     {
                         setting_id: setting.id,
-                        name: 'core.auth.passkey_creation',
+                        user_id: this.auth.user.id,
+                        name: 'core.security.passkey_creation',
                         value: value ? '1' : '0'
                     },
                     env.lang
@@ -140,7 +141,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
             }
         }
         else {
-            console.error('Setting core.auth.passkey_creation does not exist.')
+            console.error('Setting `core.security.passkey_creation` does not exist.')
         }
     }
 }
