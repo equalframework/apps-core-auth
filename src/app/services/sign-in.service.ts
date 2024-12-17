@@ -83,7 +83,12 @@ export class SignInService {
     public recursiveBase64StrToArrayBuffer(obj: any) {
         let prefix = '=?BINARY?B?';
         let suffix = '?=';
-        if (typeof obj === 'object') {
+        if (Array.isArray(obj)) {
+            for (let i = 0; i < obj.length; ++i) {
+                this.recursiveBase64StrToArrayBuffer(obj[i]);
+            }
+        }
+        else if (typeof obj === 'object') {
             for (let key in obj) {
                 if (typeof obj[key] === 'string') {
                     let str = obj[key];
