@@ -52,7 +52,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
         this.loading = true;
 
         try {
-            const options = await this.api.fetch('/?get=core_user_passkey-register-options', { login: this.user_sign_in_info.username });
+            const options = await this.api.fetch('/?get=core_user_passkey-register-options', { user_handle: this.user_sign_in_info.user_handle });
 
             const registerToken = options.register_token;
             delete options.register_token;
