@@ -43,7 +43,7 @@ export class AuthSigninPasskeyComponent implements OnInit {
             try {
                 const credential: any = await navigator.credentials.get(options);
                 try {
-                    await this.api.call('/?do=core_user_passkey-auth', {
+                    await this.api.call('/?do=core_user_auth_passkey', {
                         auth_token: options.authToken,
                         credential_id: credential.rawId ? this.signIn.arrayBufferToBase64(credential.rawId) : null,
                         client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
