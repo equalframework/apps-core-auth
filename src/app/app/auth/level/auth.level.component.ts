@@ -34,7 +34,7 @@ export class AuthLevelComponent implements OnInit {
     public passkey_signin_error = false;
     public passkey_server_error = false;
 
-    private user_sign_in_info: UserSignInInfo|null = null;
+    public user_sign_in_info: UserSignInInfo|null = null;
 
     constructor(
         private route: ActivatedRoute,

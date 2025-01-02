@@ -24,17 +24,20 @@
 
                 <div *ngIf="selected_auth_method === 'passkey'">
                     <div class="actions">
-                        <button mat-flat-button [class.spinner]="loading"  [disabled]="loading" color="primary">
+                        <button mat-flat-button [class.spinner]="loading" [disabled]="loading || !user_sign_in_info.has_passkey" color="primary">
                             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                             {{'AUTH_LEVEL_ACTION_PASSKEY_LOGIN' | translate}}
                         </button>
                     </div>
 
+                    <div class="messages" *ngIf="!user_sign_in_info.has_passkey">
+                        <div class="message"><mat-icon>not_interested</mat-icon> <span>{{'AUTH_LEVEL_ERROR_NO_PASSKEY' | translate}}</span></div>
+                    </div>
                     <div class="messages" *ngIf="passkey_signin_error">
-                        <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_PASSKEY_AUTH' | translate}}</span></div>
+                        <div class="message"><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_PASSKEY_AUTH' | translate}}</span></div>
                     </div>
                     <div class="messages" *ngIf="passkey_server_error">
-                        <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>
+                        <div class="message"><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>
                     </div>
                 </div>
 

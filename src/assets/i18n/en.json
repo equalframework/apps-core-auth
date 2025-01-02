@@ -96,6 +96,7 @@
     "AUTH_LEVEL_SUBTITLE": "Sign in",
     "AUTH_LEVEL_ACTION_TRY_ANOTHER_WAY": "Try another way",
     "AUTH_LEVEL_ACTION_PASSKEY_LOGIN": "Use passkey to confirm",
+    "AUTH_LEVEL_ERROR_NO_PASSKEY": "You need to create a passkey to elevate your privileges",
     "AUTH_LEVEL_SUCCESS": "Success",
     "AUTH_SIGNUP_TITLE": "New Account",
     "AUTH_SIGNUP_SIGNUP": "Sign up",

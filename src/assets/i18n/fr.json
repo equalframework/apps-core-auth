@@ -96,6 +96,7 @@
     "AUTH_LEVEL_SUBTITLE": "S'identifier",
     "AUTH_LEVEL_ACTION_TRY_ANOTHER_WAY": "Essayer une autre méthode",
     "AUTH_LEVEL_ACTION_PASSKEY_LOGIN": "Utiliser une clé d'accès pour confirmer",
+    "AUTH_LEVEL_ERROR_NO_PASSKEY": "Vous devez créer une clé d'accès pour élever vos privilèges",
     "AUTH_LEVEL_SUCCESS": "Succès",
     "AUTH_SIGNUP_TITLE": "Nouveau compte",
     "AUTH_SIGNUP_SIGNUP": "S'inscrire",
