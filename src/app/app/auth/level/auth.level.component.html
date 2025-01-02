@@ -1,0 +1,57 @@
+<div class="container">
+    <mat-card>
+        <mat-card-header>
+            <div mat-card-avatar><mat-icon>login</mat-icon></div>
+            <mat-card-title>{{'AUTH_LEVEL_TITLE' | translate}}</mat-card-title>
+            <mat-card-subtitle>{{'AUTH_LEVEL_SUBTITLE' | translate}}</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+            <div *ngIf="step === 'select-auth-method' && !selected_auth_method && authentication_methods.length" class="select-auth-method-container">
+                <button *ngFor="let method of authentication_methods"
+                        mat-flat-button
+                        color="primary"
+                        (click)="onSelectAuthMethod(method)"
+                >
+                    {{ method }}
+                </button>
+            </div>
+
+            <form *ngIf="step === 'authentication' && selected_auth_method" (ngSubmit)="onAuthSubmit()">
+                <!-- TODO: Handle password -->
+
+                <!-- TODO: Handle email -->
+
+                <div *ngIf="selected_auth_method === 'passkey'">
+                    <div class="actions">
+                        <button mat-flat-button [class.spinner]="loading" [disabled]="loading || !user_sign_in_info.has_passkey" color="primary">
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                            {{'AUTH_LEVEL_ACTION_PASSKEY_LOGIN' | translate}}
+                        </button>
+                    </div>
+
+                    <div class="messages" *ngIf="!user_sign_in_info.has_passkey">
+                        <div class="message"><mat-icon>not_interested</mat-icon> <span>{{'AUTH_LEVEL_ERROR_NO_PASSKEY' | translate}}</span></div>
+                    </div>
+                    <div class="messages" *ngIf="passkey_signin_error">
+                        <div class="message"><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_PASSKEY_AUTH' | translate}}</span></div>
+                    </div>
+                    <div class="messages" *ngIf="passkey_server_error">
+                        <div class="message"><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>
+                    </div>
+                </div>
+
+                <div class="options">
+                    <span *ngIf="authentication_methods.length > 1" class="option" (click)="onTryAnotherWay()">
+                        {{'AUTH_LEVEL_ACTION_TRY_ANOTHER_WAY' | translate}}
+                    </span>
+                </div>
+            </form>
+
+            <div *ngIf="step === 'authenticated'" class="auth-success">
+                <mat-icon class="icon">verified_user</mat-icon>
+                {{'AUTH_LEVEL_SUCCESS' | translate}}
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

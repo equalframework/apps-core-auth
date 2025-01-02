@@ -66,8 +66,7 @@ export class AppRootComponent implements OnInit {
             console.log('after authenticate');
         }
         catch(err) {
-            // user is not authenticated : hide loader and go to /signin or received route if hash is present
-            this.ready = true;
+            // user is not authenticated : go to /signin or received route if hash is present
             try {
                 let hash = window.location.hash;
                 const route = hash.substring(2);
@@ -80,6 +79,14 @@ export class AppRootComponent implements OnInit {
                 // empty hash or non-existing route: default to /signin
                 this.router.navigate(['/signin']);
             }
+        }
+        /**
+         * Hide loader if:
+         *   - trying to elevate privileges (AuthLevelComponent)
+         *   - not authenticated yet
+         */
+        finally {
+            this.ready = true;
         }
     }
 }
