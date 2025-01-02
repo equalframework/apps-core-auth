@@ -28,7 +28,10 @@ export class SignInService {
             const should_not_propose_to_create_passkey =
                 this.user_sign_in_info === null || this.user_sign_in_info.has_passkey || !this.user_sign_in_info.passkey_creation;
 
-            if(is_user_authenticated && should_not_propose_to_create_passkey) {
+            const url = window.location.hash;
+            const level_elevation = url.startsWith('#/level/'); // trying to elevate privileges (AuthLevelComponent)
+
+            if(is_user_authenticated && should_not_propose_to_create_passkey && !level_elevation) {
                 this.redirectAfterAuthenticate();
             }
         });
@@ -40,7 +43,7 @@ export class SignInService {
                     ['/signin/password', '/signin/passkey', '/signin/passkey-create-first'].includes(current_url);
 
                 if(does_current_component_need_user_sign_in_info && !this.user_sign_in_info) {
-                    this.router.navigate(['/signin'])
+                    this.router.navigate(['/signin']);
                 }
             }
         });

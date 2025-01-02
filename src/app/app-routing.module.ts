@@ -5,6 +5,7 @@ import { AuthSigninComponent } from './app/auth/signin/auth.signin.component';
 import { AuthSigninPasswordComponent } from './app/auth/signin/password/auth.signin.password.component';
 import { AuthSigninPasskeyComponent } from './app/auth/signin/passkey/auth.signin.passkey.component';
 import { AuthSigninPasskeyCreateFirstComponent } from './app/auth/signin/passkey-create-first/auth.signin.passkey-create-first.component';
+import { AuthLevelComponent } from './app/auth/level/auth.level.component';
 import { AuthRecoverPasswordComponent } from './app/auth/recover/password/auth.recover.password.component';
 import { AuthRecoverUsernameComponent } from './app/auth/recover/username/auth.recover.username.component';
 import { AuthResetComponent } from './app/auth/reset/auth.reset.component';
@@ -36,6 +37,10 @@ const routes: Routes = [
     {
         path: 'signin/passkey-create-first',
         component: AuthSigninPasskeyCreateFirstComponent
+    },
+    {
+        path: 'level/:level',
+        component: AuthLevelComponent
     },
     {
         path: 'recover/password',
