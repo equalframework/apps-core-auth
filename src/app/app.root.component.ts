@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { AuthService } from 'sb-shared-lib';
+import { AuthService, AppinfoService } from 'sb-shared-lib';
 import { SignInService } from './services/sign-in.service';
+import { Title } from '@angular/platform-browser';
 
 /*
     This is the component that is bootstrapped by app.module.ts
@@ -20,11 +21,17 @@ export class AppRootComponent implements OnInit {
     constructor(
         private auth: AuthService,
         private router: Router,
-        private signIn: SignInService
+        private signIn: SignInService,
+        private appInfo: AppinfoService,
+        private titleService: Title
     ) {}
 
     public async ngOnInit() {
         this.handleRedirectParam();
+
+        this.appInfo.load('core', 'auth').then((manifest: any) => {
+            this.titleService.setTitle(manifest.name);
+        });
 
         await this.tryAuthenticate();
     }
