@@ -85,6 +85,9 @@
     "AUTH_SIGNIN_ACTION_LOGIN": "Connect",
     "AUTH_SIGNIN_ACTION_PASSKEY_LOGIN": "Use passkey to confirm",
     "AUTH_SIGNIN_ACTION_CREATE_PASSKEY": "Create a passkey",
+    "AUTH_SIGNIN_ACTION_CREATE_TOTPKEY": "Set up an authenticator code",
+    "AUTH_SIGNIN_ACTION_TOTPKEY_AUTH_CODE": "Authentication code",
+    "AUTH_SIGNIN_ACTION_VALIDATE_TOTPKEY_CREATION": "Validate the creation",
     "AUTH_SIGNIN_ACTION_RECOVER_USERNAME": "Recover username",
     "AUTH_SIGNIN_ACTION_RECOVER": "Recover password",
     "AUTH_SIGNIN_ACTION_REGISTER": "Create a new account",
@@ -140,6 +143,8 @@
     "AUTH_ERROR_PASSKEY_AUTH": "An error occurred during the authentication process with your passkey.",
     "AUTH_ERROR_PASSKEY_CREATE": "An error occurred during the creation of your passkey.",
     "AUTH_ERROR_SERVER_ERROR": "A server error occurred. Please try later or contact support.",
+    "AUTH_ERROR_TOTPKEY_CREATE": "An error occurred during the creation of your authenticator code.",
+    "AUTH_ERROR_MISSING_OTP": "Authentication code missing",
 
     "APPS_APP_BOOKING": "Bookings",
     "APPS_APP_POS": "Point of Sale",

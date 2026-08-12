@@ -26,7 +26,7 @@ export class SignInService {
         this.auth.getObservable().subscribe((user: any) => {
             const is_user_authenticated = user?.id > 0;
             const should_not_propose_to_create_passkey =
-                this.user_sign_in_info === null || this.user_sign_in_info.has_passkey || !this.user_sign_in_info.passkey_creation;
+                this.user_sign_in_info === null || this.user_sign_in_info.user_data.has_passkey || !this.user_sign_in_info.allowed_creations.includes('passkey');
 
             const url = window.location.hash;
             const level_elevation = url.startsWith('#/level/'); // trying to elevate privileges (AuthLevelComponent)
@@ -65,7 +65,7 @@ export class SignInService {
             }
             else {
                 this.router.navigate([
-                    user_sign_in_info.has_passkey ? '/signin/passkey' : '/signin/password'
+                    user_sign_in_info.user_data.has_passkey ? '/signin/passkey' : '/signin/password'
                 ]);
             }
         }

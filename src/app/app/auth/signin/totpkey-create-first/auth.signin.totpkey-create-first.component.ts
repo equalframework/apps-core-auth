@@ -1,22 +1,26 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ApiService, AuthService, EnvService } from 'sb-shared-lib';
 import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
 
 @Component({
-    selector: 'auth-signin-passkey-create-first',
-    templateUrl: 'auth.signin.passkey-create-first.component.html',
-    styleUrls: ['auth.signin.passkey-create-first.component.scss']
+    selector: 'auth-signin-totpkey-create-first',
+    templateUrl: 'auth.signin.totpkey-create-first.component.html',
+    styleUrls: ['auth.signin.totpkey-create-first.component.scss']
 })
-export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
+export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
 
     public form: FormGroup;
     public loading = false;
-    public create_passkey_error: boolean = false;
-    public server_error: boolean = false;
+    public create_totpkey_error: boolean = false;
+    public auth_code_mismatch: boolean = false;
     public user_sign_in_info: UserSignInInfo|null = null;
+
+    public step: 'propose-creation'|'scan-qr-code' = 'propose-creation';
+    public totpkey: any = null;
+    public qr_code_img = '';
 
     constructor(
         private formBuilder: FormBuilder,
@@ -41,51 +45,46 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
     }
 
     private setUpForm() {
-        this.form = <FormGroup>this.formBuilder.group({
-            dont_show_again: [false]
-        });
+        this.form = this.formBuilder.group(
+            {
+                auth_code: ['', [Validators.required, Validators.pattern(/^(?:[0-9]{6}|[0-9]{8})$/)]],
+                dont_show_again: [false]
+            }
+        ) as FormGroup;
     }
 
     public async onSubmit() {
-        this.create_passkey_error = false;
-        this.server_error = false;
         this.loading = true;
-
-        try {
-            const options = await this.api.fetch('/?get=core_user_passkey-register-options', { user_handle: this.user_sign_in_info.methods_data?.passkey?.user_handle });
-
-            const registerToken = options.register_token;
-            delete options.register_token;
-
-            this.signIn.recursiveBase64StrToArrayBuffer(options);
+        if(this.step === 'propose-creation') {
+            this.create_totpkey_error = false;
 
             try {
-                const credential: any = await navigator.credentials.create(options);
+                this.totpkey = await this.api.call('/?do=core_user_totpkey-create');
 
-                try {
-                    await this.api.call('/?do=core_user_passkey-register', {
-                        register_token: registerToken,
-                        transports: credential.response.getTransports ? credential.response.getTransports() : null,
-                        client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
-                        attestation_object: credential.response.attestationObject ? this.signIn.arrayBufferToBase64(credential.response.attestationObject) : null
-                    });
-
-                    // auth.authenticate
-                    this.signIn.redirectAfterAuthenticate();
-                }
-                catch(e) {
-                    console.error('Error during server registration call:', e);
-                    this.server_error = true;
-                }
+                this.step = 'scan-qr-code';
+                this.qr_code_img = this.totpkey.totp_qr_code_uri;
             }
             catch(e) {
-                console.error('WebAuthn credential creation error:', e);
-                this.create_passkey_error = true;
+                console.error('Error creating totpkey:', e);
+                this.create_totpkey_error = true;
             }
         }
-        catch(e) {
-            console.error('Error fetching passkey authentication options:', e);
-            this.server_error = true;
+        else if(this.step === 'scan-qr-code') {
+            this.auth_code_mismatch = false;
+
+            try {
+                await this.api.call('/?do=core_user_totpkey-validate', {
+                    totpkey_id: this.totpkey.id,
+                    auth_code: this.form.get('auth_code').value
+                });
+
+                // auth.authenticate
+                this.signIn.redirectAfterAuthenticate();
+            }
+            catch(e) {
+                console.error('Error validating totpkey:', e);
+                this.auth_code_mismatch = true;
+            }
         }
 
         this.loading = false;

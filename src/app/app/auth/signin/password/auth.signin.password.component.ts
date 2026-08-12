@@ -66,7 +66,10 @@ export class AuthSigninPasswordComponent implements OnInit {
         try {
             const data = await this.auth.signIn(this.user_sign_in_info.username, this.f.password.value);
 
-            if(this.user_sign_in_info && !this.user_sign_in_info.has_passkey && this.user_sign_in_info.passkey_creation) {
+            if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_totpkey && this.user_sign_in_info.allowed_creations.includes('totpkey')) {
+                this.router.navigate(['signin/totpkey-create-first']);
+            }
+            else if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_passkey && this.user_sign_in_info.allowed_creations.includes('passkey')) {
                 this.router.navigate(['signin/passkey-create-first']);
             }
             else {

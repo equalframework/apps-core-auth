@@ -85,6 +85,9 @@
     "AUTH_SIGNIN_ACTION_LOGIN": "Connexion",
     "AUTH_SIGNIN_ACTION_PASSKEY_LOGIN": "Utiliser une clé d'accès pour confirmer",
     "AUTH_SIGNIN_ACTION_CREATE_PASSKEY": "Créer une clé d'accès",
+    "AUTH_SIGNIN_ACTION_CREATE_TOTPKEY": "Configurer un code d’authentification",
+    "AUTH_SIGNIN_ACTION_VALIDATE_TOTPKEY_CREATION": "Valider la création",
+    "AUTH_SIGNIN_ACTION_TOTPKEY_AUTH_CODE": "Code d'authentification",
     "AUTH_SIGNIN_ACTION_RECOVER_USERNAME": "Identifiant oublié ?",
     "AUTH_SIGNIN_ACTION_RECOVER": "Mot de passe oublié ?",
     "AUTH_SIGNIN_ACTION_REGISTER": "Créer un nouveau compte",
@@ -140,6 +143,8 @@
     "AUTH_ERROR_PASSKEY_AUTH": "Une erreur s'est produite lors du processus d'authentification avec votre clé d'accès.",
     "AUTH_ERROR_PASSKEY_CREATE": "Une erreur s'est produite lors de la création de votre clé d'accès.",
     "AUTH_ERROR_SERVER_ERROR": "Une erreur s'est produite au niveau du serveur. Veuillez réessayer dans quelques minutes.",
+    "AUTH_ERROR_TOTPKEY_CREATE": "Une erreur s'est produite lors de la création de votre code d'authentification.",
+    "AUTH_ERROR_MISSING_OTP": "Code d'authentification manquant",
 
     "APPS_APP_BOOKING": "Réservations",
     "APPS_APP_PLANNING": "Planning",
