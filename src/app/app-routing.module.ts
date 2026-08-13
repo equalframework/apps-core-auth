@@ -12,6 +12,7 @@ import { AuthRecoverUsernameComponent } from './app/auth/recover/username/auth.r
 import { AuthResetComponent } from './app/auth/reset/auth.reset.component';
 import { AuthSignupComponent } from './app/auth/signup/auth.signup.component';
 import { AuthSignupSentComponent } from './app/auth/signup/sent/auth.signup.sent.component';
+import { AuthSigninTotpComponent } from './app/auth/signin/totp/auth.signin.totp.component';
 
 const routes: Routes = [
     /* routes specific to current app */
@@ -38,6 +39,10 @@ const routes: Routes = [
     {
         path: 'signin/passkey-create-first',
         component: AuthSigninPasskeyCreateFirstComponent
+    },
+    {
+        path: 'signin/totp',
+        component: AuthSigninTotpComponent
     },
     {
         path: 'signin/totpkey-create-first',

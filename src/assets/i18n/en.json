@@ -106,6 +106,7 @@
     "AUTH_SIGNUP_USERNAME": "Username",
     "AUTH_SIGNUP_EMAIL": "Email",
     "AUTH_SIGNUP_PASSWORD": "Password",
+    "AUTH_SIGNIN_AUTH_CODE": "Authentication code",
     "AUTH_SIGNUP_CONFIRM": "Confirmation",
     "AUTH_SIGNUP_ACTION_SIGNUP": "Sign up",
     "AUTH_SIGNUP_SENT_TITLE": "Account creation",
@@ -145,6 +146,7 @@
     "AUTH_ERROR_SERVER_ERROR": "A server error occurred. Please try later or contact support.",
     "AUTH_ERROR_TOTPKEY_CREATE": "An error occurred during the creation of your authenticator code.",
     "AUTH_ERROR_MISSING_OTP": "Authentication code missing",
+    "AUTH_ERROR_INVALID_AUTH_CODE": "Invalid authentication code",
 
     "APPS_APP_BOOKING": "Bookings",
     "APPS_APP_POS": "Point of Sale",

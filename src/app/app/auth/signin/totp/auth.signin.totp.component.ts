@@ -7,19 +7,19 @@ import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
 
 @Component({
-    selector: 'auth-signin-password',
-    templateUrl: 'auth.signin.password.component.html',
-    styleUrls: ['auth.signin.password.component.scss']
+    selector: 'auth-signin-totp',
+    templateUrl: 'auth.signin.totp.component.html',
+    styleUrls: ['auth.signin.totp.component.scss']
 })
-export class AuthSigninPasswordComponent implements OnInit {
+export class AuthSigninTotpComponent implements OnInit {
 
     public form: FormGroup;
     public loading: boolean = false;
     public submitted: boolean = false;
-    public hidepass: boolean = true;
     public signin_error: boolean = false;
     public server_error: boolean = false;
     public user_sign_in_info: UserSignInInfo|null = null;
+    public mfa_token: string = '';
 
     constructor(
         private formBuilder: FormBuilder,
@@ -40,15 +40,19 @@ export class AuthSigninPasswordComponent implements OnInit {
             this.user_sign_in_info = user_sign_in_info;
         });
 
+        this.signIn.mfa_token$.subscribe((mfa_token) => {
+            this.mfa_token = mfa_token;
+        })
+
         this.setUpForm();
     }
 
     private setUpForm() {
         this.form = <FormGroup>this.formBuilder.group({
-            password: ['', Validators.required]
+            auth_code: ['', [Validators.required, Validators.pattern(/^(?:[0-9]{6}|[0-9]{8})$/)]]
         });
 
-        this.form.get('password').valueChanges.subscribe( () => {
+        this.form.get('auth_code').valueChanges.subscribe( () => {
             this.submitted = false;
         });
     }
@@ -56,6 +60,7 @@ export class AuthSigninPasswordComponent implements OnInit {
     public async onSubmit() {
         // prevent submitting invalid form
         if (this.form.invalid) {
+            console.log('invalid')
             return;
         }
         this.signin_error = false;
@@ -64,30 +69,11 @@ export class AuthSigninPasswordComponent implements OnInit {
         this.loading = true;
 
         try {
-            const data = await this.auth.signIn(this.user_sign_in_info.username, this.f.password.value);
+            await this.auth.signInTotp(this.user_sign_in_info.username, this.mfa_token, this.f.auth_code.value);
 
-            if(data?.mfa_required) {
-                if(this.user_sign_in_info && this.user_sign_in_info.user_data.has_totpkey) {
-                    this.signIn.setMfaToken(data.auth_token);
-                    this.router.navigate(['signin/totp']);
-                }
-                else {
-                    this.router.navigate(['signin/totpkey-create-first']);
-                }
-            }
-            else {
-                if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_totpkey && this.user_sign_in_info.allowed_creations.includes('totpkey')) {
-                    this.router.navigate(['signin/totpkey-create-first']);
-                }
-                else if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_passkey && this.user_sign_in_info.allowed_creations.includes('passkey')) {
-                    this.router.navigate(['signin/passkey-create-first']);
-                }
-                else {
-                    // success: we should be able to authenticate
-                    this.auth.authenticate();
-                    // SignIn service should now redirect to /apps
-                }
-            }
+            // success: we should be able to authenticate
+            this.auth.authenticate();
+            // SignIn service should now redirect to /apps
         }
         catch(response:any) {
             console.log(response);
@@ -127,10 +113,6 @@ export class AuthSigninPasswordComponent implements OnInit {
             // there was an error: stop loading indicator
             this.loading = false;
         }
-    }
-
-    public onRecover() {
-        this.router.navigate(['/recover/password']);
     }
 
     public onSwitchUser() {

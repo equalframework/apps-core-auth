@@ -26,6 +26,7 @@ import { AuthLevelComponent } from './app/auth/level/auth.level.component';
 import { AuthResetComponent } from './app/auth/reset/auth.reset.component';
 import { AuthSignupComponent } from './app/auth/signup/auth.signup.component';
 import { AuthSignupSentComponent } from './app/auth/signup/sent/auth.signup.sent.component';
+import { AuthSigninTotpComponent } from './app/auth/signin/totp/auth.signin.totp.component';
 
 @NgModule({
     declarations: [
@@ -36,6 +37,7 @@ import { AuthSignupSentComponent } from './app/auth/signup/sent/auth.signup.sent
         AuthSigninPasswordComponent,
         AuthSigninPasskeyComponent,
         AuthSigninPasskeyCreateFirstComponent,
+        AuthSigninTotpComponent,
         AuthSigninTotpkeyCreateFirstComponent,
         AuthLevelComponent,
         AuthResetComponent,

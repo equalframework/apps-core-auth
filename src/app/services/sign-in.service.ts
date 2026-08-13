@@ -13,6 +13,7 @@ export class SignInService {
     private redirect_to: string = '/apps';
     public user_sign_in_info$ = new BehaviorSubject<UserSignInInfo|null>(null);
     private user_sign_in_info: UserSignInInfo|null = null;
+    public mfa_token$ = new BehaviorSubject('');
 
     constructor(
         private auth: AuthService,
@@ -81,6 +82,10 @@ export class SignInService {
 
     public setUserSignInInfo(user_sign_in_info: UserSignInInfo) {
         this.user_sign_in_info$.next(user_sign_in_info);
+    }
+
+    public setMfaToken(mfa_token: string) {
+        this.mfa_token$.next(mfa_token);
     }
 
     public recursiveBase64StrToArrayBuffer(obj: any) {

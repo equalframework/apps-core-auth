@@ -106,6 +106,7 @@
     "AUTH_SIGNUP_USERNAME": "Nom d'utilisateur",
     "AUTH_SIGNUP_EMAIL": "Email",
     "AUTH_SIGNUP_PASSWORD": "Mot de passe",
+    "AUTH_SIGNIN_AUTH_CODE": "Code d'authentification",
     "AUTH_SIGNUP_CONFIRM": "Confirmation",
     "AUTH_SIGNUP_ACTION_SIGNUP": "S'inscrire",
     "AUTH_SIGNUP_SENT_TITLE": "Création de compte",
@@ -145,6 +146,7 @@
     "AUTH_ERROR_SERVER_ERROR": "Une erreur s'est produite au niveau du serveur. Veuillez réessayer dans quelques minutes.",
     "AUTH_ERROR_TOTPKEY_CREATE": "Une erreur s'est produite lors de la création de votre code d'authentification.",
     "AUTH_ERROR_MISSING_OTP": "Code d'authentification manquant",
+    "AUTH_ERROR_INVALID_AUTH_CODE": "Code d'authentification invalide",
 
     "APPS_APP_BOOKING": "Réservations",
     "APPS_APP_PLANNING": "Planning",
