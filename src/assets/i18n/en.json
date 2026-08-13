@@ -79,6 +79,7 @@
     "AUTH_SIGNIN_TITLE": "Connection",
     "AUTH_SIGNIN_TITLE_WELCOME": "Welcome",
     "AUTH_SIGNIN_TITLE_CONNECTED": "Connected",
+    "AUTH_SIGNIN_TITLE_MFA_REQUIRED": "MFA required",
     "AUTH_SIGNIN_SIGNIN": "Sign in",
     "AUTH_SIGNIN_USERNAME": "Username or email address",
     "AUTH_SIGNIN_PASSWORD": "Password",

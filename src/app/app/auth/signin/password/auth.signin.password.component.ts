@@ -67,8 +67,8 @@ export class AuthSigninPasswordComponent implements OnInit {
             const data = await this.auth.signIn(this.user_sign_in_info.username, this.f.password.value);
 
             if(data?.mfa_required) {
+                this.signIn.setMfaToken(data.auth_token);
                 if(this.user_sign_in_info && this.user_sign_in_info.user_data.has_totpkey) {
-                    this.signIn.setMfaToken(data.auth_token);
                     this.router.navigate(['signin/totp']);
                 }
                 else {

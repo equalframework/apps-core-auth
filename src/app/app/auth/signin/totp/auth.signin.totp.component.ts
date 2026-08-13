@@ -42,7 +42,7 @@ export class AuthSigninTotpComponent implements OnInit {
 
         this.signIn.mfa_token$.subscribe((mfa_token) => {
             this.mfa_token = mfa_token;
-        })
+        });
 
         this.setUpForm();
     }

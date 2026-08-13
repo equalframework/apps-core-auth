@@ -17,6 +17,7 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
     public create_totpkey_error: boolean = false;
     public auth_code_mismatch: boolean = false;
     public user_sign_in_info: UserSignInInfo|null = null;
+    public mfa_token: string = '';
 
     public step: 'propose-creation'|'scan-qr-code' = 'propose-creation';
     public totpkey: any = null;
@@ -41,6 +42,10 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
             this.user_sign_in_info = user_sign_in_info;
         });
 
+        this.signIn.mfa_token$.subscribe((mfa_token) => {
+            this.mfa_token = mfa_token;
+        });
+
         this.setUpForm();
     }
 
@@ -59,7 +64,13 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
             this.create_totpkey_error = false;
 
             try {
-                this.totpkey = await this.api.call('/?do=core_user_totpkey-create');
+                let data: any = {};
+                if(this.mfa_token) {
+                    // #memo - auth_token required because user isn't logged in yet
+                    data.auth_token = this.mfa_token;
+                }
+
+                this.totpkey = await this.api.call('/?do=core_user_totpkey-create', data);
 
                 this.step = 'scan-qr-code';
                 this.qr_code_img = this.totpkey.totp_qr_code_uri;
@@ -73,10 +84,16 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
             this.auth_code_mismatch = false;
 
             try {
-                await this.api.call('/?do=core_user_totpkey-validate', {
+                let data: any = {
                     totpkey_id: this.totpkey.id,
                     auth_code: this.form.get('auth_code').value
-                });
+                };
+                if(this.mfa_token) {
+                    // #memo - auth_token required because user isn't logged in yet
+                    data.auth_token = this.mfa_token;
+                }
+
+                await this.api.call('/?do=core_user_totpkey-validate', data);
 
                 // auth.authenticate
                 this.signIn.redirectAfterAuthenticate();
