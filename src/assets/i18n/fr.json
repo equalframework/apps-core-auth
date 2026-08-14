@@ -145,9 +145,12 @@
     "AUTH_ERROR_PASSKEY_AUTH": "Une erreur s'est produite lors du processus d'authentification avec votre clé d'accès.",
     "AUTH_ERROR_PASSKEY_CREATE": "Une erreur s'est produite lors de la création de votre clé d'accès.",
     "AUTH_ERROR_SERVER_ERROR": "Une erreur s'est produite au niveau du serveur. Veuillez réessayer dans quelques minutes.",
+    "AUTH_ERROR_EXPIRED_TOKEN": "Token d'authentification expiré, merci de recommencé la procédure de connexion.",
+    "AUTH_ERROR_FAILED_ATTEMPS_REACHED": "La limite de tentatives infructueuses a été atteinte.",
     "AUTH_ERROR_TOTPKEY_CREATE": "Une erreur s'est produite lors de la création de votre code d'authentification.",
     "AUTH_ERROR_MISSING_OTP": "Code d'authentification manquant",
     "AUTH_ERROR_INVALID_AUTH_CODE": "Code d'authentification invalide",
+    "AUTH_ERROR_MISSING_AUTH_CODE": "Code d'authentification manquant",
 
     "APPS_APP_BOOKING": "Réservations",
     "APPS_APP_PLANNING": "Planning",

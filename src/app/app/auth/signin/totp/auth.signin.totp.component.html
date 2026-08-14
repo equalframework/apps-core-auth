@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="actions">
-                    <button mat-flat-button [class.spinner]="loading"  [disabled]="loading" color="primary">
+                    <button mat-flat-button [class.spinner]="loading"  [disabled]="loading || expired_token || failed_attempts_reached" color="primary">
                         <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                         {{'AUTH_SIGNIN_ACTION_LOGIN' | translate}}
                     </button>
@@ -28,6 +28,12 @@
                 </div>
                 <div class="messages" *ngIf="submitted && server_error">
                     <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>
+                </div>
+                <div class="messages" *ngIf="submitted && expired_token">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_EXPIRED_TOKEN' | translate}}</span></div>
+                </div>
+                <div class="messages" *ngIf="submitted && failed_attempts_reached">
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_FAILED_ATTEMPS_REACHED' | translate}}</span></div>
                 </div>
 
                 <div class="options">

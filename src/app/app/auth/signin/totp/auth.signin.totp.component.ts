@@ -18,6 +18,8 @@ export class AuthSigninTotpComponent implements OnInit {
     public submitted: boolean = false;
     public signin_error: boolean = false;
     public server_error: boolean = false;
+    public expired_token: boolean = false;
+    public failed_attempts_reached: boolean = false;
     public user_sign_in_info: UserSignInInfo|null = null;
     public mfa_token: string = '';
 
@@ -89,6 +91,14 @@ export class AuthSigninTotpComponent implements OnInit {
                     if(response.hasOwnProperty('error') && response.error.hasOwnProperty('errors')) {
                         let code = Object.keys(response.error['errors'])[0];
                         let msg = response.error['errors'][code];
+
+                        if(msg === 'allowed_failed_attempts_reached') {
+                            this.failed_attempts_reached = true;
+                        }
+                        else if(msg === 'expired_token') {
+                            this.expired_token = true;
+                        }
+
                         throw {
                             code: code,
                             message: msg
