@@ -29,10 +29,13 @@ export class SignInService {
             const should_not_propose_to_create_passkey =
                 this.user_sign_in_info === null || this.user_sign_in_info.user_data.has_passkey || !this.user_sign_in_info.allowed_creations.includes('passkey');
 
+            const should_not_propose_to_create_totpkey =
+                this.user_sign_in_info === null || this.user_sign_in_info.user_data.has_totpkey || !this.user_sign_in_info.allowed_creations.includes('totpkey');
+
             const url = window.location.hash;
             const level_elevation = url.startsWith('#/level/'); // trying to elevate privileges (AuthLevelComponent)
 
-            if(is_user_authenticated && should_not_propose_to_create_passkey && !level_elevation) {
+            if(is_user_authenticated && should_not_propose_to_create_passkey && should_not_propose_to_create_totpkey && !level_elevation) {
                 this.redirectAfterAuthenticate();
             }
         });

@@ -109,17 +109,17 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
 
     public async onIgnoreAndContinue() {
         if(this.f.dont_show_again.value) {
-            await this.updateProposeFirstPasskeyCreationSettingValue(false);
+            await this.updateProposeFirstTotpkeyCreationSettingValue(false);
         }
 
         this.signIn.redirectAfterAuthenticate();
     }
 
-    private async updateProposeFirstPasskeyCreationSettingValue(value: boolean) {
+    private async updateProposeFirstTotpkeyCreationSettingValue(value: boolean) {
         let settings_domain = [
             ['package', '=', 'core'],
             ['section', '=', 'security'],
-            ['code', '=', 'passkey_creation'],
+            ['code', '=', 'totpkey_creation'],
         ];
 
         const settings = await this.api.collect('core\\setting\\Setting', settings_domain, ['id']);
@@ -149,7 +149,7 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
                     {
                         setting_id: setting.id,
                         user_id: this.auth.user.id,
-                        name: 'core.security.passkey_creation',
+                        name: 'core.security.totpkey_creation',
                         value: value ? '1' : '0'
                     },
                     env.lang
@@ -157,7 +157,7 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
             }
         }
         else {
-            console.error('Setting `core.security.passkey_creation` does not exist.')
+            console.error('Setting `core.security.totpkey_creation` does not exist.')
         }
     }
 }
