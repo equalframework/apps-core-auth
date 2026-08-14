@@ -152,6 +152,8 @@
     "AUTH_ERROR_INVALID_AUTH_CODE": "Please enter a valid {{digits}}-digit authentication code",
     "AUTH_ERROR_AUTH_CODE_MISMATCH": "Authentication code mismatch",
     "AUTH_ERROR_MISSING_AUTH_CODE": "Missing authentication code",
+    "AUTH_SIGNIN_ACTION_GO_TO_CREATE_PASSKEY": "Create a passkey",
+    "AUTH_SIGNIN_ACTION_GO_TO_CREATE_TOTPKEY": "Set up an authenticator code",
 
     "APPS_APP_BOOKING": "Bookings",
     "APPS_APP_POS": "Point of Sale",

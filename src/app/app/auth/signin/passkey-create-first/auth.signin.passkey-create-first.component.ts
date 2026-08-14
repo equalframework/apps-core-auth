@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ApiService, AuthService, EnvService } from 'sb-shared-lib';
 import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'auth-signin-passkey-create-first',
@@ -23,7 +24,8 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
         private signIn: SignInService,
         private api: ApiService,
         private auth: AuthService,
-        private env: EnvService
+        private env: EnvService,
+        private router: Router
     ) {
         this.form = new FormGroup({});
     }
@@ -89,6 +91,10 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
         }
 
         this.loading = false;
+    }
+
+    public async onGoToCreateTotpkey() {
+        this.router.navigate(['signin/totpkey-create-first']);
     }
 
     public async onIgnoreAndContinue() {
