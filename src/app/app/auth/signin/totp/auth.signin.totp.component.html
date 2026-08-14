@@ -11,7 +11,8 @@
                     <mat-form-field appearance="fill">
                         <mat-label>{{'AUTH_SIGNIN_AUTH_CODE' | translate}}</mat-label>
                         <input matInput formControlName="auth_code" />
-                        <mat-error *ngIf="f.auth_code.errors">{{'AUTH_ERROR_MISSING_AUTH_CODE' | translate}}</mat-error>
+                        <mat-error *ngIf="f.auth_code.errors && !f.auth_code.errors?.pattern">{{'AUTH_ERROR_MISSING_AUTH_CODE' | translate}}</mat-error>
+                        <mat-error *ngIf="f.auth_code.errors && f.auth_code.errors?.pattern">{{'AUTH_ERROR_INVALID_AUTH_CODE' | translate : { digits: user_sign_in_info.methods_data.totp.digits } }}</mat-error>
                     </mat-form-field>
                 </div>
 
@@ -24,7 +25,7 @@
                 </div>
 
                 <div class="messages" *ngIf="submitted && signin_error">
-                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_INVALID_AUTH_CODE' | translate}}</span></div>
+                    <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_AUTH_CODE_MISMATCH' | translate}}</span></div>
                 </div>
                 <div class="messages" *ngIf="submitted && server_error">
                     <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_SERVER_ERROR' | translate}}</span></div>

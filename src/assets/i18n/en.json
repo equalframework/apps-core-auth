@@ -149,7 +149,8 @@
     "AUTH_ERROR_FAILED_ATTEMPS_REACHED": "The failed attempts limit has been reached.",
     "AUTH_ERROR_TOTPKEY_CREATE": "An error occurred during the creation of your authenticator code.",
     "AUTH_ERROR_MISSING_OTP": "Authentication code missing",
-    "AUTH_ERROR_INVALID_AUTH_CODE": "Invalid authentication code",
+    "AUTH_ERROR_INVALID_AUTH_CODE": "Please enter a valid {{digits}}-digit authentication code",
+    "AUTH_ERROR_AUTH_CODE_MISMATCH": "Authentication code mismatch",
     "AUTH_ERROR_MISSING_AUTH_CODE": "Missing authentication code",
 
     "APPS_APP_BOOKING": "Bookings",

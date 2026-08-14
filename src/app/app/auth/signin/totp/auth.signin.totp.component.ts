@@ -40,18 +40,25 @@ export class AuthSigninTotpComponent implements OnInit {
     public async ngOnInit() {
         this.signIn.user_sign_in_info$.subscribe((user_sign_in_info) => {
             this.user_sign_in_info = user_sign_in_info;
+
+            let totp_conf: any = { digits: 6 };
+            if(this.user_sign_in_info?.methods_data?.totp) {
+                totp_conf = this.user_sign_in_info.methods_data.totp;
+            }
+
+            this.setUpForm(totp_conf);
         });
 
         this.signIn.mfa_token$.subscribe((mfa_token) => {
             this.mfa_token = mfa_token;
         });
-
-        this.setUpForm();
     }
 
-    private setUpForm() {
+    private setUpForm(totp_conf: any) {
+        const digits = totp_conf.digits;
+
         this.form = <FormGroup>this.formBuilder.group({
-            auth_code: ['', [Validators.required, Validators.pattern(/^(?:[0-9]{6}|[0-9]{8})$/)]]
+            auth_code: ['', [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${digits}}$`))]]
         });
 
         this.form.get('auth_code').valueChanges.subscribe( () => {
@@ -62,7 +69,6 @@ export class AuthSigninTotpComponent implements OnInit {
     public async onSubmit() {
         // prevent submitting invalid form
         if (this.form.invalid) {
-            console.log('invalid')
             return;
         }
         this.signin_error = false;
@@ -78,48 +84,29 @@ export class AuthSigninTotpComponent implements OnInit {
             // SignIn service should now redirect to /apps
         }
         catch(response:any) {
-            console.log(response);
-
-            try {
-                if(response.hasOwnProperty('status')) {
-                    if(response.status == 0) {
-                        throw {
-                            code: 'server_error',
-                            message: 'Server error'
-                        };
-                    }
-                    if(response.hasOwnProperty('error') && response.error.hasOwnProperty('errors')) {
-                        let code = Object.keys(response.error['errors'])[0];
-                        let msg = response.error['errors'][code];
-
-                        if(msg === 'allowed_failed_attempts_reached') {
-                            this.failed_attempts_reached = true;
-                        }
-                        else if(msg === 'expired_token') {
-                            this.expired_token = true;
-                        }
-
-                        throw {
-                            code: code,
-                            message: msg
-                        };
-                    }
-                }
-                else {
-                    throw {
-                        code: 'server_error',
-                        message: 'Server error'
-                    };
-                }
-            }
-            catch(exception:any) {
-                if(exception.code == 'server_error') {
+            if(response.hasOwnProperty('status')) {
+                if(response.status == 0) {
                     this.server_error = true;
                 }
-                else {
-                    this.signin_error = true;
+                else if(response.hasOwnProperty('error') && response.error.hasOwnProperty('errors')) {
+                    let code = Object.keys(response.error['errors'])[0];
+                    let error_code = response.error['errors'][code];
+
+                    if(error_code === 'allowed_failed_attempts_reached') {
+                        this.failed_attempts_reached = true;
+                    }
+                    else if(error_code === 'expired_token') {
+                        this.expired_token = true;
+                    }
+                    else {
+                        this.signin_error = true;
+                    }
                 }
             }
+            else {
+                this.server_error = true;
+            }
+
             // there was an error: stop loading indicator
             this.loading = false;
         }
