@@ -148,7 +148,6 @@
     "AUTH_ERROR_EXPIRED_TOKEN": "Token d'authentification expiré, merci de recommencé la procédure de connexion.",
     "AUTH_ERROR_FAILED_ATTEMPS_REACHED": "La limite de tentatives infructueuses a été atteinte.",
     "AUTH_ERROR_TOTPKEY_CREATE": "Une erreur s'est produite lors de la création de votre code d'authentification.",
-    "AUTH_ERROR_MISSING_OTP": "Code d'authentification manquant",
     "AUTH_ERROR_INVALID_AUTH_CODE": "Veuillez saisir un code d'authentification valide à {{digits}} chiffres.",
     "AUTH_ERROR_AUTH_CODE_MISMATCH": "Le code d'authentification ne correspond pas",
     "AUTH_ERROR_MISSING_AUTH_CODE": "Code d'authentification manquant",

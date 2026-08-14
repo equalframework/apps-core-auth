@@ -55,10 +55,8 @@ export class AuthSigninTotpComponent implements OnInit {
     }
 
     private setUpForm(totp_conf: any) {
-        const digits = totp_conf.digits;
-
         this.form = <FormGroup>this.formBuilder.group({
-            auth_code: ['', [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${digits}}$`))]]
+            auth_code: ['', [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${totp_conf.digits}}$`))]]
         });
 
         this.form.get('auth_code').valueChanges.subscribe( () => {

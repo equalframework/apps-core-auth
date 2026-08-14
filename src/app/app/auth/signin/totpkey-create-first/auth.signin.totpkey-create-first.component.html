@@ -36,8 +36,13 @@
                         <mat-form-field appearance="fill" class="password">
                             <mat-label>{{'AUTH_SIGNIN_ACTION_TOTPKEY_AUTH_CODE' | translate}}</mat-label>
                             <input matInput formControlName="auth_code" />
-                            <mat-error *ngIf="f.auth_code.errors">{{'AUTH_ERROR_MISSING_OTP' | translate}}</mat-error>
+                            <mat-error *ngIf="f.auth_code.errors && !f.auth_code.errors?.pattern">{{'AUTH_ERROR_MISSING_AUTH_CODE' | translate}}</mat-error>
+                            <mat-error *ngIf="f.auth_code.errors && f.auth_code.errors?.pattern">{{'AUTH_ERROR_INVALID_AUTH_CODE' | translate : { digits: totpkey.digits } }}</mat-error>
                         </mat-form-field>
+                    </div>
+
+                    <div class="messages" *ngIf="auth_code_mismatch">
+                        <div class="message" ><mat-icon>not_interested</mat-icon> <span>{{'AUTH_ERROR_AUTH_CODE_MISMATCH' | translate}}</span></div>
                     </div>
 
                     <div class="actions">

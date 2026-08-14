@@ -47,14 +47,12 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
         this.signIn.mfa_token$.subscribe((mfa_token) => {
             this.mfa_token = mfa_token;
         });
-
-        this.setUpForm();
     }
 
-    private setUpForm() {
+    private setUpForm(totp_conf: any) {
         this.form = this.formBuilder.group(
             {
-                auth_code: ['', [Validators.required, Validators.pattern(/^(?:[0-9]{6}|[0-9]{8})$/)]],
+                auth_code: ['', [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${totp_conf.digits}}$`))]],
                 dont_show_again: [false]
             }
         ) as FormGroup;
@@ -73,6 +71,8 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
                 }
 
                 this.totpkey = await this.api.call('/?do=core_user_totpkey-create', data);
+
+                this.setUpForm({ digits: this.totpkey.digits });
 
                 this.step = 'scan-qr-code';
                 this.qr_code_img = this.totpkey.totp_qr_code_uri;
