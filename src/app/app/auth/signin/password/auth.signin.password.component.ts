@@ -53,6 +53,14 @@ export class AuthSigninPasswordComponent implements OnInit {
         });
     }
 
+    /**
+     * Upon success, redirects user:
+     *   - to "signin/totp" route                       -> if mfa is required and user has a totpkey
+     *   - to "signin/totpkey-create-first" route       -> if mfa is required and user hasn't a totpkey
+     *   - to "signin/totpkey-create-first" route       -> if mfa isn't required, totp authentication is enabled and user hasn't a totpkey
+     *   - to "signin/passkey-create-first" route       -> if mfa isn't required, passkey authentication is enabled and user hasn't a passkey
+     *   - to "apps"                                    -> fallback
+     */
     public async onSubmit() {
         // prevent submitting invalid form
         if (this.form.invalid) {
