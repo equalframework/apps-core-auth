@@ -41,7 +41,7 @@ export class SignInService {
             if(event instanceof NavigationEnd) {
                 const current_url = event.url;
                 const does_current_component_need_user_sign_in_info =
-                    ['/signin/password', '/signin/passkey', '/signin/passkey-create-first'].includes(current_url);
+                    ['/signin/password', '/signin/passkey', '/signin/passkey-create-first', '/signin/totp', '/signin/totpkey-create-first'].includes(current_url);
 
                 if(does_current_component_need_user_sign_in_info && !this.user_sign_in_info) {
                     this.router.navigate(['/signin']);
@@ -66,7 +66,7 @@ export class SignInService {
             }
             else {
                 this.router.navigate([
-                    user_sign_in_info.user_data.has_passkey ? '/signin/passkey' : '/signin/password'
+                    (user_sign_in_info.user_data.has_passkey && user_sign_in_info.allowed_methods.includes('passkey')) ? '/signin/passkey' : '/signin/password'
                 ]);
             }
         }
