@@ -76,10 +76,10 @@ export class AuthSigninPasswordComponent implements OnInit {
                 }
             }
             else {
-                if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_totpkey && this.user_sign_in_info.allowed_creations.includes('totpkey')) {
+                if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_totpkey && this.user_sign_in_info.allowed_methods.includes('totp') && this.user_sign_in_info.allowed_creations.includes('totpkey')) {
                     this.router.navigate(['signin/totpkey-create-first']);
                 }
-                else if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_passkey && this.user_sign_in_info.allowed_creations.includes('passkey')) {
+                else if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_passkey && this.user_sign_in_info.allowed_methods.includes('passkey') && this.user_sign_in_info.allowed_creations.includes('passkey')) {
                     this.router.navigate(['signin/passkey-create-first']);
                 }
                 else {
