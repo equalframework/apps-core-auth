@@ -49,7 +49,7 @@
                 </ng-container>
 
                 <div *ngIf="!mfa_token" class="options">
-                    <span *ngIf="user_sign_in_info.allowed_methods.includes('passkey') && user_sign_in_info.allowed_creations.includes('passkey')" class="option" (click)="onGoToCreatePasskey()">{{'AUTH_SIGNIN_ACTION_GO_TO_CREATE_PASSKEY' | translate}}</span>
+                    <span *ngIf="user_sign_in_info.allowed_methods.includes('totp') && user_sign_in_info.allowed_creations.includes('totpkey')" class="option" (click)="onGoToCreatePasskey()">{{'AUTH_SIGNIN_ACTION_GO_TO_CREATE_PASSKEY' | translate}}</span>
                     <span class="option" (click)="onIgnoreAndContinue()">{{'AUTH_SIGNIN_ACTION_IGNORE_AND_CONTINUE' | translate}}</span>
                 </div>
 
