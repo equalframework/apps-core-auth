@@ -77,7 +77,7 @@ export class AuthSigninTotpComponent implements OnInit {
         this.loading = true;
 
         try {
-            await this.auth.signInTotp(this.user_sign_in_info.username, this.mfa_token, this.f.auth_code.value);
+            await this.auth.signInTotp(this.mfa_token, this.f.auth_code.value);
 
             // success: we should be able to authenticate
             this.auth.authenticate();
