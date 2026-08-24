@@ -1,6 +1,11 @@
 export interface UserSignInInfo {
-    user_handle: string;
     username: string;
-    has_passkey: boolean;
-    passkey_creation: boolean;
+    allowed_methods: ('password'|'passkey'|'totp')[];
+    allowed_creations: ('passkey'|'totpkey')[];
+    methods_data: any,
+    user_data: {
+        has_passkey: boolean,
+        has_totpkey: boolean,
+        factors?: any[]
+    }
 }

@@ -120,7 +120,7 @@ export class AuthLevelComponent implements OnInit {
         this.loading = true;
 
         try {
-            const options = await this.api.fetch('/?get=core_user_passkey-auth-options', { user_handle: this.user_sign_in_info.user_handle });
+            const options = await this.api.fetch('/?get=core_user_passkey-auth-options', { user_handle: this.user_sign_in_info.methods_data?.passkey?.user_handle });
 
             this.signIn.recursiveBase64StrToArrayBuffer(options);
 
@@ -133,7 +133,7 @@ export class AuthLevelComponent implements OnInit {
                         client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
                         authenticator_data: credential.response.authenticatorData ? this.signIn.arrayBufferToBase64(credential.response.authenticatorData) : null,
                         signature: credential.response.signature ? this.signIn.arrayBufferToBase64(credential.response.signature) : null,
-                        user_handle: this.user_sign_in_info.user_handle
+                        user_handle: this.user_sign_in_info.methods_data?.passkey?.user_handle
                     });
 
                     this.step = 'authenticated';

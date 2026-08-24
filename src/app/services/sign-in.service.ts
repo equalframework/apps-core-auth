@@ -13,6 +13,7 @@ export class SignInService {
     private redirect_to: string = '/apps';
     public user_sign_in_info$ = new BehaviorSubject<UserSignInInfo|null>(null);
     private user_sign_in_info: UserSignInInfo|null = null;
+    public mfa_token$ = new BehaviorSubject('');
 
     constructor(
         private auth: AuthService,
@@ -26,12 +27,15 @@ export class SignInService {
         this.auth.getObservable().subscribe((user: any) => {
             const is_user_authenticated = user?.id > 0;
             const should_not_propose_to_create_passkey =
-                this.user_sign_in_info === null || this.user_sign_in_info.has_passkey || !this.user_sign_in_info.passkey_creation;
+                this.user_sign_in_info === null || this.user_sign_in_info.user_data.has_passkey || !this.user_sign_in_info.allowed_creations.includes('passkey');
+
+            const should_not_propose_to_create_totpkey =
+                this.user_sign_in_info === null || this.user_sign_in_info.user_data.has_totpkey || !this.user_sign_in_info.allowed_creations.includes('totpkey');
 
             const url = window.location.hash;
             const level_elevation = url.startsWith('#/level/'); // trying to elevate privileges (AuthLevelComponent)
 
-            if(is_user_authenticated && should_not_propose_to_create_passkey && !level_elevation) {
+            if(is_user_authenticated && should_not_propose_to_create_passkey && should_not_propose_to_create_totpkey && !level_elevation) {
                 this.redirectAfterAuthenticate();
             }
         });
@@ -40,7 +44,7 @@ export class SignInService {
             if(event instanceof NavigationEnd) {
                 const current_url = event.url;
                 const does_current_component_need_user_sign_in_info =
-                    ['/signin/password', '/signin/passkey', '/signin/passkey-create-first'].includes(current_url);
+                    ['/signin/password', '/signin/passkey', '/signin/passkey-create-first', '/signin/totp', '/signin/totpkey-create-first'].includes(current_url);
 
                 if(does_current_component_need_user_sign_in_info && !this.user_sign_in_info) {
                     this.router.navigate(['/signin']);
@@ -65,7 +69,7 @@ export class SignInService {
             }
             else {
                 this.router.navigate([
-                    user_sign_in_info.has_passkey ? '/signin/passkey' : '/signin/password'
+                    (user_sign_in_info.user_data.has_passkey && user_sign_in_info.allowed_methods.includes('passkey')) ? '/signin/passkey' : '/signin/password'
                 ]);
             }
         }
@@ -81,6 +85,10 @@ export class SignInService {
 
     public setUserSignInInfo(user_sign_in_info: UserSignInInfo) {
         this.user_sign_in_info$.next(user_sign_in_info);
+    }
+
+    public setMfaToken(mfa_token: string) {
+        this.mfa_token$.next(mfa_token);
     }
 
     public recursiveBase64StrToArrayBuffer(obj: any) {

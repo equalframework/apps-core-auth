@@ -21,10 +21,12 @@ import { AuthSigninComponent } from './app/auth/signin/auth.signin.component';
 import { AuthSigninPasswordComponent } from './app/auth/signin/password/auth.signin.password.component';
 import { AuthSigninPasskeyComponent } from './app/auth/signin/passkey/auth.signin.passkey.component';
 import { AuthSigninPasskeyCreateFirstComponent } from './app/auth/signin/passkey-create-first/auth.signin.passkey-create-first.component';
+import { AuthSigninTotpkeyCreateFirstComponent } from './app/auth/signin/totpkey-create-first/auth.signin.totpkey-create-first.component';
 import { AuthLevelComponent } from './app/auth/level/auth.level.component';
 import { AuthResetComponent } from './app/auth/reset/auth.reset.component';
 import { AuthSignupComponent } from './app/auth/signup/auth.signup.component';
 import { AuthSignupSentComponent } from './app/auth/signup/sent/auth.signup.sent.component';
+import { AuthSigninTotpComponent } from './app/auth/signin/totp/auth.signin.totp.component';
 
 @NgModule({
     declarations: [
@@ -35,6 +37,8 @@ import { AuthSignupSentComponent } from './app/auth/signup/sent/auth.signup.sent
         AuthSigninPasswordComponent,
         AuthSigninPasskeyComponent,
         AuthSigninPasskeyCreateFirstComponent,
+        AuthSigninTotpComponent,
+        AuthSigninTotpkeyCreateFirstComponent,
         AuthLevelComponent,
         AuthResetComponent,
         AuthSignupComponent,

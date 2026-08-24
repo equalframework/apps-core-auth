@@ -53,6 +53,14 @@ export class AuthSigninPasswordComponent implements OnInit {
         });
     }
 
+    /**
+     * Upon success, redirects user:
+     *   - to "signin/totp" route                       -> if mfa is required and user has a totpkey
+     *   - to "signin/totpkey-create-first" route       -> if mfa is required and user hasn't a totpkey
+     *   - to "signin/totpkey-create-first" route       -> if mfa isn't required, totp authentication is enabled and user hasn't a totpkey
+     *   - to "signin/passkey-create-first" route       -> if mfa isn't required, passkey authentication is enabled and user hasn't a passkey
+     *   - to "apps"                                    -> fallback
+     */
     public async onSubmit() {
         // prevent submitting invalid form
         if (this.form.invalid) {
@@ -66,13 +74,27 @@ export class AuthSigninPasswordComponent implements OnInit {
         try {
             const data = await this.auth.signIn(this.user_sign_in_info.username, this.f.password.value);
 
-            if(this.user_sign_in_info && !this.user_sign_in_info.has_passkey && this.user_sign_in_info.passkey_creation) {
-                this.router.navigate(['signin/passkey-create-first']);
+            if(data?.mfa_required) {
+                this.signIn.setMfaToken(data.auth_token);
+                if(this.user_sign_in_info && this.user_sign_in_info.user_data.has_totpkey) {
+                    this.router.navigate(['signin/totp']);
+                }
+                else {
+                    this.router.navigate(['signin/totpkey-create-first']);
+                }
             }
             else {
-                // success: we should be able to authenticate
-                this.auth.authenticate();
-                // SignIn service should now redirect to /apps
+                if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_totpkey && this.user_sign_in_info.allowed_methods.includes('totp') && this.user_sign_in_info.allowed_creations.includes('totpkey')) {
+                    this.router.navigate(['signin/totpkey-create-first']);
+                }
+                else if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_passkey && this.user_sign_in_info.allowed_methods.includes('passkey') && this.user_sign_in_info.allowed_creations.includes('passkey')) {
+                    this.router.navigate(['signin/passkey-create-first']);
+                }
+                else {
+                    // success: we should be able to authenticate
+                    this.auth.authenticate();
+                    // SignIn service should now redirect to /apps
+                }
             }
         }
         catch(response:any) {

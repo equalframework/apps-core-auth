@@ -22,6 +22,7 @@
                 </div>
 
                 <div class="options">
+                    <span *ngIf="user_sign_in_info.allowed_methods.includes('totp') && user_sign_in_info.allowed_creations.includes('totpkey')" class="option" (click)="onGoToCreateTotpkey()">{{'AUTH_SIGNIN_ACTION_GO_TO_CREATE_TOTPKEY' | translate}}</span>
                     <span class="option" (click)="onIgnoreAndContinue()">{{'AUTH_SIGNIN_ACTION_IGNORE_AND_CONTINUE' | translate}}</span>
                 </div>
 

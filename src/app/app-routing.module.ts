@@ -5,12 +5,14 @@ import { AuthSigninComponent } from './app/auth/signin/auth.signin.component';
 import { AuthSigninPasswordComponent } from './app/auth/signin/password/auth.signin.password.component';
 import { AuthSigninPasskeyComponent } from './app/auth/signin/passkey/auth.signin.passkey.component';
 import { AuthSigninPasskeyCreateFirstComponent } from './app/auth/signin/passkey-create-first/auth.signin.passkey-create-first.component';
+import { AuthSigninTotpkeyCreateFirstComponent } from './app/auth/signin/totpkey-create-first/auth.signin.totpkey-create-first.component';
 import { AuthLevelComponent } from './app/auth/level/auth.level.component';
 import { AuthRecoverPasswordComponent } from './app/auth/recover/password/auth.recover.password.component';
 import { AuthRecoverUsernameComponent } from './app/auth/recover/username/auth.recover.username.component';
 import { AuthResetComponent } from './app/auth/reset/auth.reset.component';
 import { AuthSignupComponent } from './app/auth/signup/auth.signup.component';
 import { AuthSignupSentComponent } from './app/auth/signup/sent/auth.signup.sent.component';
+import { AuthSigninTotpComponent } from './app/auth/signin/totp/auth.signin.totp.component';
 
 const routes: Routes = [
     /* routes specific to current app */
@@ -37,6 +39,14 @@ const routes: Routes = [
     {
         path: 'signin/passkey-create-first',
         component: AuthSigninPasskeyCreateFirstComponent
+    },
+    {
+        path: 'signin/totp',
+        component: AuthSigninTotpComponent
+    },
+    {
+        path: 'signin/totpkey-create-first',
+        component: AuthSigninTotpkeyCreateFirstComponent
     },
     {
         path: 'level/:level',
