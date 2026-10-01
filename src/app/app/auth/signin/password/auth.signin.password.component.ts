@@ -56,6 +56,7 @@ export class AuthSigninPasswordComponent implements OnInit {
     /**
      * Upon success, redirects user:
      *   - to "signin/totp" route                       -> if mfa is required and user has a totpkey
+     *   - to "signin/emailotp" route                   -> if mfa is required and otp is required (and no totpkey)
      *   - to "signin/totpkey-create-first" route       -> if mfa is required and user hasn't a totpkey
      *   - to "signin/totpkey-create-first" route       -> if mfa isn't required, totp authentication is enabled and user hasn't a totpkey
      *   - to "signin/passkey-create-first" route       -> if mfa isn't required, passkey authentication is enabled and user hasn't a passkey
@@ -79,8 +80,11 @@ export class AuthSigninPasswordComponent implements OnInit {
                 if(this.user_sign_in_info && this.user_sign_in_info.user_data.has_totpkey) {
                     this.router.navigate(['signin/totp']);
                 }
-                else {
+                else if(this.user_sign_in_info.allowed_methods.includes('totp') && this.user_sign_in_info.allowed_creations.includes('totpkey')) {
                     this.router.navigate(['signin/totpkey-create-first']);
+                }
+                else {
+                    this.router.navigate(['signin/email-otp']);
                 }
             }
             else {
