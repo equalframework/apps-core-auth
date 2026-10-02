@@ -13,6 +13,7 @@ import { AuthResetComponent } from './app/auth/reset/auth.reset.component';
 import { AuthSignupComponent } from './app/auth/signup/auth.signup.component';
 import { AuthSignupSentComponent } from './app/auth/signup/sent/auth.signup.sent.component';
 import { AuthSigninTotpComponent } from './app/auth/signin/totp/auth.signin.totp.component';
+import { AuthSigninEmailOtpComponent } from './app/auth/signin/email-otp/auth.signin.email-otp.component';
 
 const routes: Routes = [
     /* routes specific to current app */
@@ -43,6 +44,10 @@ const routes: Routes = [
     {
         path: 'signin/totp',
         component: AuthSigninTotpComponent
+    },
+    {
+        path: 'signin/email-otp',
+        component: AuthSigninEmailOtpComponent
     },
     {
         path: 'signin/totpkey-create-first',

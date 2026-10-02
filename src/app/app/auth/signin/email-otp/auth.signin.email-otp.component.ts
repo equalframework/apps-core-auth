@@ -7,11 +7,11 @@ import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
 
 @Component({
-    selector: 'auth-signin-totp',
-    templateUrl: 'auth.signin.totp.component.html',
-    styleUrls: ['auth.signin.totp.component.scss']
+    selector: 'auth-signin-email-otp',
+    templateUrl: 'auth.signin.email-otp.component.html',
+    styleUrls: ['auth.signin.email-otp.component.scss']
 })
-export class AuthSigninTotpComponent implements OnInit {
+export class AuthSigninEmailOtpComponent implements OnInit {
 
     public form: FormGroup;
     public loading: boolean = false;
@@ -19,6 +19,7 @@ export class AuthSigninTotpComponent implements OnInit {
     public signin_error: boolean = false;
     public server_error: boolean = false;
     public expired_token: boolean = false;
+    public email_otp_key_expired: boolean = false;
     public failed_attempts_reached: boolean = false;
     public user_sign_in_info: UserSignInInfo|null = null;
     public mfa_token: string = '';
@@ -75,7 +76,7 @@ export class AuthSigninTotpComponent implements OnInit {
         this.loading = true;
 
         try {
-            await this.auth.authenticateWith('totp', { auth_code: this.f.auth_code.value }, this.mfa_token);
+            await this.auth.authenticateWith('emailotp', { auth_code: this.f.auth_code.value }, this.mfa_token);
 
             // success: we should be able to authenticate
             this.auth.authenticate();
@@ -90,7 +91,10 @@ export class AuthSigninTotpComponent implements OnInit {
                     let code = Object.keys(response.error['errors'])[0];
                     let error_code = response.error['errors'][code];
 
-                    if(error_code === 'allowed_failed_attempts_reached') {
+                    if(error_code === 'email_otp_key_expired') {
+                        this.email_otp_key_expired = true;
+                    }
+                    else if(error_code === 'allowed_failed_attempts_reached') {
                         this.failed_attempts_reached = true;
                     }
                     else if(error_code === 'expired_token') {
