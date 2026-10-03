@@ -129,6 +129,7 @@
     "AUTH_RESET_TITLE" : "Nouveau mot de passe",
     "AUTH_RESET_SUBTITLE": "Définir un nouveau mot de passe",
     "AUTH_RESET_PASSWORD": "Mot de passe",
+    "AUTH_RESET_PASSWORD_HINT": "Minimum 8 caractères, dont 1 chiffre, 1 majuscule, 1 minuscule et 1 caractère spécial (#?!@$%^*-).",
     "AUTH_RESET_CONFIRM": "Confirmation",
     "AUTH_RESET_ACTION_SUBMIT": "Réinitialiser",
     "AUTH_RESET_ACTION_SIGNIN": "S'identifier",

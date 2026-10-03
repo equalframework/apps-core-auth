@@ -32,7 +32,7 @@
 
                 <div class="options">
                     <span class="option" (click)="onRecover()">{{'AUTH_SIGNIN_ACTION_RECOVER_USERNAME' | translate}}</span>
-                    <span class="option" (click)="onRegister()">{{'AUTH_SIGNIN_ACTION_REGISTER' | translate}}</span>
+                    <span *ngIf="account_creation_enabled" class="option" (click)="onRegister()">{{'AUTH_SIGNIN_ACTION_REGISTER' | translate}}</span>
                 </div>
 
             </form>

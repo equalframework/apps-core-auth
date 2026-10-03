@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { AuthService } from 'sb-shared-lib';
 import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
 
@@ -19,11 +18,10 @@ export class AuthSigninPasswordComponent implements OnInit {
     public hidepass: boolean = true;
     public signin_error: boolean = false;
     public server_error: boolean = false;
-    public user_sign_in_info: UserSignInInfo|null = null;
+    public user_signin_info: UserSignInInfo|null = null;
 
     constructor(
         private formBuilder: FormBuilder,
-        private auth: AuthService,
         private router: Router,
         private signIn: SignInService
     ) {
@@ -36,8 +34,8 @@ export class AuthSigninPasswordComponent implements OnInit {
     }
 
     public async ngOnInit() {
-        this.signIn.user_sign_in_info$.subscribe((user_sign_in_info) => {
-            this.user_sign_in_info = user_sign_in_info;
+        this.signIn.user_signin_info$.subscribe((user_signin_info) => {
+            this.user_signin_info = user_signin_info;
         });
 
         this.setUpForm();
@@ -53,14 +51,6 @@ export class AuthSigninPasswordComponent implements OnInit {
         });
     }
 
-    /**
-     * Upon success, redirects user:
-     *   - to "signin/totp" route                       -> if mfa is required and user has a totpkey
-     *   - to "signin/totpkey-create-first" route       -> if mfa is required and user hasn't a totpkey
-     *   - to "signin/totpkey-create-first" route       -> if mfa isn't required, totp authentication is enabled and user hasn't a totpkey
-     *   - to "signin/passkey-create-first" route       -> if mfa isn't required, passkey authentication is enabled and user hasn't a passkey
-     *   - to "apps"                                    -> fallback
-     */
     public async onSubmit() {
         // prevent submitting invalid form
         if (this.form.invalid) {
@@ -72,30 +62,10 @@ export class AuthSigninPasswordComponent implements OnInit {
         this.loading = true;
 
         try {
-            const data = await this.auth.signIn(this.user_sign_in_info.username, this.f.password.value);
-
-            if(data?.mfa_required) {
-                this.signIn.setMfaToken(data.auth_token);
-                if(this.user_sign_in_info && this.user_sign_in_info.user_data.has_totpkey) {
-                    this.router.navigate(['signin/totp']);
-                }
-                else {
-                    this.router.navigate(['signin/totpkey-create-first']);
-                }
-            }
-            else {
-                if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_totpkey && this.user_sign_in_info.allowed_methods.includes('totp') && this.user_sign_in_info.allowed_creations.includes('totpkey')) {
-                    this.router.navigate(['signin/totpkey-create-first']);
-                }
-                else if(this.user_sign_in_info && !this.user_sign_in_info.user_data.has_passkey && this.user_sign_in_info.allowed_methods.includes('passkey') && this.user_sign_in_info.allowed_creations.includes('passkey')) {
-                    this.router.navigate(['signin/passkey-create-first']);
-                }
-                else {
-                    // success: we should be able to authenticate
-                    this.auth.authenticate();
-                    // SignIn service should now redirect to /apps
-                }
-            }
+            await this.signIn.authenticateWith('pwd', {
+                login: this.user_signin_info.username,
+                password: this.f.password.value
+            });
         }
         catch(response:any) {
             console.log(response);
@@ -142,7 +112,6 @@ export class AuthSigninPasswordComponent implements OnInit {
     }
 
     public onSwitchUser() {
-        // By setting user sign in info to null, the SignInService auto redirect to 'signin' to re-enter login
-        this.signIn.setUserSignInInfo(null);
+        this.signIn.resetSignInContext();
     }
 }

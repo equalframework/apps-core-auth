@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { AuthService } from 'sb-shared-lib';
 import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
 
@@ -20,13 +18,10 @@ export class AuthSigninTotpComponent implements OnInit {
     public server_error: boolean = false;
     public expired_token: boolean = false;
     public failed_attempts_reached: boolean = false;
-    public user_sign_in_info: UserSignInInfo|null = null;
-    public mfa_token: string = '';
+    public user_signin_info: UserSignInInfo|null = null;
 
     constructor(
         private formBuilder: FormBuilder,
-        private auth: AuthService,
-        private router: Router,
         private signIn: SignInService
     ) {
         this.form = new FormGroup({});
@@ -38,20 +33,17 @@ export class AuthSigninTotpComponent implements OnInit {
     }
 
     public async ngOnInit() {
-        this.signIn.user_sign_in_info$.subscribe((user_sign_in_info) => {
-            this.user_sign_in_info = user_sign_in_info;
+        this.signIn.user_signin_info$.subscribe((user_signin_info) => {
+            this.user_signin_info = user_signin_info;
 
             let totp_conf: any = { digits: 6 };
-            if(this.user_sign_in_info?.methods_data?.totp) {
-                totp_conf = this.user_sign_in_info.methods_data.totp;
+            if(this.user_signin_info?.methods_data?.otp) {
+                totp_conf = this.user_signin_info.methods_data.otp;
             }
 
             this.setUpForm(totp_conf);
         });
 
-        this.signIn.mfa_token$.subscribe((mfa_token) => {
-            this.mfa_token = mfa_token;
-        });
     }
 
     private setUpForm(totp_conf: any) {
@@ -75,11 +67,9 @@ export class AuthSigninTotpComponent implements OnInit {
         this.loading = true;
 
         try {
-            await this.auth.signInTotp(this.mfa_token, this.f.auth_code.value);
-
-            // success: we should be able to authenticate
-            this.auth.authenticate();
-            // SignIn service should now redirect to /apps
+            await this.signIn.authenticateWith('otp', {
+                auth_code: this.f.auth_code.value
+            });
         }
         catch(response:any) {
             if(response.hasOwnProperty('status')) {
@@ -111,7 +101,6 @@ export class AuthSigninTotpComponent implements OnInit {
     }
 
     public onSwitchUser() {
-        // By setting user sign in info to null, the SignInService auto redirect to 'signin' to re-enter login
-        this.signIn.setUserSignInInfo(null);
+        this.signIn.resetSignInContext();
     }
 }

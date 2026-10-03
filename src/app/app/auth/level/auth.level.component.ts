@@ -34,7 +34,7 @@ export class AuthLevelComponent implements OnInit {
     public passkey_signin_error = false;
     public passkey_server_error = false;
 
-    public user_sign_in_info: UserSignInInfo|null = null;
+    public user_signin_info: UserSignInInfo|null = null;
 
     constructor(
         private route: ActivatedRoute,
@@ -72,7 +72,7 @@ export class AuthLevelComponent implements OnInit {
 
     private async setUserSignInInfo(login: string): Promise<void> {
         try {
-            this.user_sign_in_info = await this.api.fetch('/?get=signin-info', { login }) as UserSignInInfo;
+            this.user_signin_info = await this.api.fetch('/?get=signin-info', { login }) as UserSignInInfo;
         }
         catch (e) {
             console.log(e);
@@ -120,7 +120,7 @@ export class AuthLevelComponent implements OnInit {
         this.loading = true;
 
         try {
-            const options = await this.api.fetch('/?get=core_user_passkey-auth-options', { user_handle: this.user_sign_in_info.methods_data?.passkey?.user_handle });
+            const options = await this.api.fetch('/?get=core_user_passkey-auth-options', { user_handle: this.user_signin_info.methods_data?.passkey?.user_handle });
 
             this.signIn.recursiveBase64StrToArrayBuffer(options);
 
@@ -133,7 +133,7 @@ export class AuthLevelComponent implements OnInit {
                         client_data_json: credential.response.clientDataJSON ? this.signIn.arrayBufferToBase64(credential.response.clientDataJSON) : null,
                         authenticator_data: credential.response.authenticatorData ? this.signIn.arrayBufferToBase64(credential.response.authenticatorData) : null,
                         signature: credential.response.signature ? this.signIn.arrayBufferToBase64(credential.response.signature) : null,
-                        user_handle: this.user_sign_in_info.methods_data?.passkey?.user_handle
+                        user_handle: this.user_signin_info.methods_data?.passkey?.user_handle
                     });
 
                     this.step = 'authenticated';

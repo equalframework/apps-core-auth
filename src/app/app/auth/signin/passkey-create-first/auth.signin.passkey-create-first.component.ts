@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ApiService, AuthService, EnvService } from 'sb-shared-lib';
 import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'auth-signin-passkey-create-first',
@@ -17,15 +16,14 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
     public loading = false;
     public create_passkey_error: boolean = false;
     public server_error: boolean = false;
-    public user_sign_in_info: UserSignInInfo|null = null;
+    public user_signin_info: UserSignInInfo|null = null;
 
     constructor(
         private formBuilder: FormBuilder,
         private signIn: SignInService,
         private api: ApiService,
         private auth: AuthService,
-        private env: EnvService,
-        private router: Router
+        private env: EnvService
     ) {
         this.form = new FormGroup({});
     }
@@ -34,9 +32,13 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
         return this.form.controls;
     }
 
+    public get can_create_totpkey(): boolean {
+        return this.signIn.canCreateTotpkey();
+    }
+
     public ngOnInit() {
-        this.signIn.user_sign_in_info$.subscribe((user_sign_in_info) => {
-            this.user_sign_in_info = user_sign_in_info;
+        this.signIn.user_signin_info$.subscribe((user_signin_info) => {
+            this.user_signin_info = user_signin_info;
         });
 
         this.setUpForm();
@@ -54,7 +56,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
         this.loading = true;
 
         try {
-            const options = await this.api.fetch('/?get=core_user_passkey-register-options', { user_handle: this.user_sign_in_info.methods_data?.passkey?.user_handle });
+            const options = await this.api.fetch('/?get=core_user_passkey-register-options', { user_handle: this.user_signin_info.methods_data?.passkey?.user_handle });
 
             const registerToken = options.register_token;
             delete options.register_token;
@@ -72,8 +74,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
                         attestation_object: credential.response.attestationObject ? this.signIn.arrayBufferToBase64(credential.response.attestationObject) : null
                     });
 
-                    // auth.authenticate
-                    this.signIn.redirectAfterAuthenticate();
+                    await this.signIn.completeCredentialCreation('passkey');
                 }
                 catch(e) {
                     console.error('Error during server registration call:', e);
@@ -94,7 +95,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
     }
 
     public async onGoToCreateTotpkey() {
-        this.router.navigate(['signin/totpkey-create-first']);
+        this.signIn.goToCredentialCreation('totpkey');
     }
 
     public async onIgnoreAndContinue() {
@@ -102,14 +103,14 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
             await this.updateProposeFirstPasskeyCreationSettingValue(false);
         }
 
-        this.signIn.redirectAfterAuthenticate();
+        await this.signIn.skipCredentialCreation('passkey');
     }
 
     private async updateProposeFirstPasskeyCreationSettingValue(value: boolean) {
         let settings_domain = [
             ['package', '=', 'core'],
             ['section', '=', 'security'],
-            ['code', '=', 'passkey_creation'],
+            ['code', '=', 'auth.passkey.creation'],
         ];
 
         const settings = await this.api.collect('core\\setting\\Setting', settings_domain, ['id']);
@@ -139,7 +140,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
                     {
                         setting_id: setting.id,
                         user_id: this.auth.user.id,
-                        name: 'core.security.passkey_creation',
+                        name: 'core.security.auth.passkey.creation',
                         value: value ? '1' : '0'
                     },
                     env.lang
@@ -147,7 +148,7 @@ export class AuthSigninPasskeyCreateFirstComponent implements OnInit {
             }
         }
         else {
-            console.error('Setting `core.security.passkey_creation` does not exist.')
+            console.error('Setting `core.security.auth.passkey.creation` does not exist.')
         }
     }
 }

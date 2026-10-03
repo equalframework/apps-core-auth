@@ -1,17 +1,17 @@
 <div class="container">
     <mat-card>
-        <ng-container *ngIf="!mfa_token">
+        <ng-container *ngIf="!auth_token">
             <mat-card-header>
                 <div mat-card-avatar><mat-icon>check_circle_outline</mat-icon></div>
                 <mat-card-title>{{'AUTH_SIGNIN_TITLE_CONNECTED' | translate}}</mat-card-title>
-                <mat-card-subtitle>{{user_sign_in_info.username}}</mat-card-subtitle>
+                <mat-card-subtitle>{{user_signin_info.username}}</mat-card-subtitle>
             </mat-card-header>
         </ng-container>
-        <ng-container *ngIf="mfa_token">
+        <ng-container *ngIf="auth_token">
             <mat-card-header>
                 <div mat-card-avatar><mat-icon>safety_check</mat-icon></div>
                 <mat-card-title>{{'AUTH_SIGNIN_TITLE_MFA_REQUIRED' | translate}}</mat-card-title>
-                <mat-card-subtitle>{{user_sign_in_info.username}}</mat-card-subtitle>
+                <mat-card-subtitle>{{user_signin_info.username}}</mat-card-subtitle>
             </mat-card-header>
         </ng-container>
         <mat-card-content>
@@ -46,19 +46,19 @@
                     </div>
 
                     <div class="actions">
-                        <button mat-flat-button [class.spinner]="loading"  [disabled]="loading" color="primary">
+                        <button mat-flat-button [class.spinner]="loading"  [disabled]="loading || form.invalid" color="primary">
                             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                             {{'AUTH_SIGNIN_ACTION_VALIDATE_TOTPKEY_CREATION' | translate}}
                         </button>
                     </div>
                 </ng-container>
 
-                <div *ngIf="!mfa_token" class="options">
-                    <span *ngIf="user_sign_in_info.allowed_methods.includes('totp') && user_sign_in_info.allowed_creations.includes('totpkey')" class="option" (click)="onGoToCreatePasskey()">{{'AUTH_SIGNIN_ACTION_GO_TO_CREATE_PASSKEY' | translate}}</span>
+                <div *ngIf="!auth_token" class="options">
+                    <span *ngIf="can_create_passkey" class="option" (click)="onGoToCreatePasskey()">{{'AUTH_SIGNIN_ACTION_GO_TO_CREATE_PASSKEY' | translate}}</span>
                     <span class="option" (click)="onIgnoreAndContinue()">{{'AUTH_SIGNIN_ACTION_IGNORE_AND_CONTINUE' | translate}}</span>
                 </div>
 
-                <mat-checkbox *ngIf="!mfa_token" formControlName="dont_show_again">{{'AUTH_SIGNIN_DONT_SHOW_AGAIN' | translate}}</mat-checkbox>
+                <mat-checkbox *ngIf="!auth_token" formControlName="dont_show_again">{{'AUTH_SIGNIN_DONT_SHOW_AGAIN' | translate}}</mat-checkbox>
             </form>
 
         </mat-card-content>

@@ -13,6 +13,7 @@
                         <mat-label>{{'AUTH_RESET_PASSWORD' | translate}}</mat-label>
                         <input [type]="(hidepass)?'password':'text'" matInput formControlName="password" />
                         <mat-icon matSuffix (click)="hidepass = !hidepass">{{(hidepass)?'visibility_off':'visibility'}}</mat-icon>
+                        <mat-hint>{{'AUTH_RESET_PASSWORD_HINT' | translate}}</mat-hint>
                         <mat-error *ngIf="f.password.errors">{{'AUTH_ERROR_INVALID_PASSWORD' | translate}}</mat-error>
                     </mat-form-field>
                 </div>

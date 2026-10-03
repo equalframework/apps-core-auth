@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { ApiService } from 'sb-shared-lib';
+import { ApiService, EnvService } from 'sb-shared-lib';
 import { SignInService } from '../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../type';
 
@@ -18,11 +18,13 @@ export class AuthSigninComponent implements OnInit {
     public submitted: boolean = false;
     public signin_error: boolean = false;
     public server_error: boolean = false;
+    public account_creation_enabled: boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
         private api: ApiService,
+        private env: EnvService,
         private signIn: SignInService
     ) {
         this.form = new FormGroup({});
@@ -33,7 +35,7 @@ export class AuthSigninComponent implements OnInit {
         return this.form.controls;
     }
 
-    public ngOnInit() {
+    public async ngOnInit() {
         // setup the form
         this.form = <FormGroup>this.formBuilder.group({
             username: ['', [Validators.required]]
@@ -42,6 +44,11 @@ export class AuthSigninComponent implements OnInit {
         this.form.get('username').valueChanges.subscribe( () => {
             this.submitted = false;
         });
+
+        const environment = await this.env.getEnv();
+        this.account_creation_enabled = environment?.auth?.account_creation?.enabled
+            ?? environment?.account_registration
+            ?? true;
     }
 
     public async onSubmit() {
@@ -57,10 +64,10 @@ export class AuthSigninComponent implements OnInit {
         const username = this.f.username.value;
 
         try {
-            const user_sign_in_info = await this.api.fetch('/?get=signin-info', { login: username }) as UserSignInInfo;
+            const user_signin_info = await this.api.fetch('/?get=signin-info', { login: username }) as UserSignInInfo;
 
             // By setting user sign in info, the SignInService auto redirect to 'signin/passkey' or 'signin/password' to auth final step
-            this.signIn.setUserSignInInfo(user_sign_in_info);
+            this.signIn.setUserSignInInfo(user_signin_info);
         }
         catch(response:any) {
             console.debug(response);
