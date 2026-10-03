@@ -1,4 +1,4 @@
-export type AuthMethod = 'pwd'|'passkey'|'otp';
+export type AuthMethod = 'pwd'|'passkey'|'totp';
 
 export type CredentialType = 'passkey'|'totpkey';
 

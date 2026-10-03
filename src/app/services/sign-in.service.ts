@@ -27,7 +27,7 @@ export class SignInService {
     private readonly authentication_routes: Record<AuthMethod, string> = {
         pwd: '/signin/password',
         passkey: '/signin/passkey',
-        otp: '/signin/totp'
+        totp: '/signin/totp'
     };
 
     constructor(

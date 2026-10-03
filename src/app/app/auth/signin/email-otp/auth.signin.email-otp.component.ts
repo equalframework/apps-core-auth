@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+import { AuthService } from 'sb-shared-lib';
 import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
 
 @Component({
-    selector: 'auth-signin-totp',
-    templateUrl: 'auth.signin.totp.component.html',
-    styleUrls: ['auth.signin.totp.component.scss']
+    selector: 'auth-signin-email-otp',
+    templateUrl: 'auth.signin.email-otp.component.html',
+    styleUrls: ['auth.signin.email-otp.component.scss']
 })
-export class AuthSigninTotpComponent implements OnInit {
+export class AuthSigninEmailOtpComponent implements OnInit {
 
     public form: FormGroup;
     public loading: boolean = false;
@@ -17,11 +19,15 @@ export class AuthSigninTotpComponent implements OnInit {
     public signin_error: boolean = false;
     public server_error: boolean = false;
     public expired_token: boolean = false;
+    public email_otp_key_expired: boolean = false;
     public failed_attempts_reached: boolean = false;
-    public user_signin_info: UserSignInInfo|null = null;
+    public user_sign_in_info: UserSignInInfo|null = null;
+    public mfa_token: string = '';
 
     constructor(
         private formBuilder: FormBuilder,
+        private auth: AuthService,
+        private router: Router,
         private signIn: SignInService
     ) {
         this.form = new FormGroup({});
@@ -33,17 +39,20 @@ export class AuthSigninTotpComponent implements OnInit {
     }
 
     public async ngOnInit() {
-        this.signIn.user_signin_info$.subscribe((user_signin_info) => {
-            this.user_signin_info = user_signin_info;
+        this.signIn.user_sign_in_info$.subscribe((user_sign_in_info) => {
+            this.user_sign_in_info = user_sign_in_info;
 
             let totp_conf: any = { digits: 6 };
-            if(this.user_signin_info?.methods_data?.otp) {
-                totp_conf = this.user_signin_info.methods_data.otp;
+            if(this.user_sign_in_info?.methods_data?.totp) {
+                totp_conf = this.user_sign_in_info.methods_data.totp;
             }
 
             this.setUpForm(totp_conf);
         });
 
+        this.signIn.mfa_token$.subscribe((mfa_token) => {
+            this.mfa_token = mfa_token;
+        });
     }
 
     private setUpForm(totp_conf: any) {
@@ -67,10 +76,10 @@ export class AuthSigninTotpComponent implements OnInit {
         this.loading = true;
 
         try {
-            await this.signIn.authenticateWith('totp', { auth_code: this.f.auth_code.value }, this.mfa_token);
+            await this.auth.authenticateWith('emailotp', { auth_code: this.f.auth_code.value }, this.mfa_token);
 
             // success: we should be able to authenticate
-            this.signIn.authenticate();
+            this.auth.authenticate();
             // SignIn service should now redirect to /apps
         }
         catch(response:any) {
@@ -82,7 +91,10 @@ export class AuthSigninTotpComponent implements OnInit {
                     let code = Object.keys(response.error['errors'])[0];
                     let error_code = response.error['errors'][code];
 
-                    if(error_code === 'allowed_failed_attempts_reached') {
+                    if(error_code === 'email_otp_key_expired') {
+                        this.email_otp_key_expired = true;
+                    }
+                    else if(error_code === 'allowed_failed_attempts_reached') {
                         this.failed_attempts_reached = true;
                     }
                     else if(error_code === 'expired_token') {
@@ -103,6 +115,7 @@ export class AuthSigninTotpComponent implements OnInit {
     }
 
     public onSwitchUser() {
-        this.signIn.resetSignInContext();
+        // By setting user sign in info to null, the SignInService auto redirect to 'signin' to re-enter login
+        this.signIn.setUserSignInInfo(null);
     }
 }
