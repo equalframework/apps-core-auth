@@ -3,7 +3,7 @@
         <mat-card-header>
             <div mat-card-avatar><mat-icon>safety_check</mat-icon></div>
             <mat-card-title>{{'AUTH_SIGNIN_TITLE_MFA_REQUIRED' | translate}}</mat-card-title>
-            <mat-card-subtitle>{{user_sign_in_info.username}}</mat-card-subtitle>
+            <mat-card-subtitle>{{user_signin_info.username}}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
             <div class="otp-notice" role="status">
@@ -18,7 +18,7 @@
                         <mat-label>{{'AUTH_SIGNIN_AUTH_CODE' | translate}}</mat-label>
                         <input matInput formControlName="auth_code" />
                         <mat-error *ngIf="f.auth_code.errors && !f.auth_code.errors?.pattern">{{'AUTH_ERROR_MISSING_AUTH_CODE' | translate}}</mat-error>
-                        <mat-error *ngIf="f.auth_code.errors && f.auth_code.errors?.pattern">{{'AUTH_ERROR_INVALID_AUTH_CODE' | translate : { digits: user_sign_in_info.methods_data.totp.digits } }}</mat-error>
+                        <mat-error *ngIf="f.auth_code.errors && f.auth_code.errors?.pattern">{{'AUTH_ERROR_INVALID_AUTH_CODE' | translate : { digits: auth_code_digits } }}</mat-error>
                     </mat-form-field>
                 </div>
 

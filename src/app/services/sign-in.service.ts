@@ -5,7 +5,9 @@ import { AuthService } from 'sb-shared-lib';
 import {
     AuthMethod,
     AuthResponse,
+    ChallengeAuthMethod,
     CredentialType,
+    DiscoveryAuthMethod,
     SignInChallenge,
     SignInWorkflowState,
     UserSignInInfo
@@ -24,10 +26,13 @@ export class SignInService {
 
     private user_signin_info: UserSignInInfo|null = null;
     private handled_credential_creations = new Set<CredentialType>();
-    private readonly authentication_routes: Record<AuthMethod, string> = {
+    private readonly authentication_routes: Record<DiscoveryAuthMethod, string> = {
         pwd: '/signin/password',
-        passkey: '/signin/passkey',
-        totp: '/signin/totp'
+        passkey: '/signin/passkey'
+    };
+    private readonly challenge_routes: Record<ChallengeAuthMethod, string> = {
+        totp: '/signin/totp',
+        email_otp: '/signin/email-otp'
     };
 
     constructor(
@@ -50,7 +55,7 @@ export class SignInService {
             if(event instanceof NavigationEnd) {
                 const current_url = event.urlAfterRedirects.split('?')[0];
                 const does_current_component_need_user_signin_info =
-                    ['/signin/password', '/signin/passkey', '/signin/passkey-create-first', '/signin/totp', '/signin/totpkey-create-first'].includes(current_url);
+                    ['/signin/password', '/signin/passkey', '/signin/passkey-create-first', '/signin/totp', '/signin/email-otp', '/signin/totpkey-create-first'].includes(current_url);
 
                 if(does_current_component_need_user_signin_info && !this.user_signin_info) {
                     this.router.navigate(['/signin']);
@@ -92,7 +97,7 @@ export class SignInService {
 
     public async authenticateWith(method: AuthMethod, credentials: any, method_auth_token?: string): Promise<AuthResponse> {
         const challenge = this.challenge$.value;
-        const auth_token = method_auth_token || (challenge?.method === method ? challenge.auth_token : undefined);
+        const auth_token = method_auth_token || challenge?.auth_token;
         // The installed shared library still declares legacy method names, but forwards this value verbatim at runtime.
         const response = await this.auth.authenticateWith(method as any, credentials, auth_token) as any;
 
@@ -102,7 +107,7 @@ export class SignInService {
             }
 
             const next_challenge: SignInChallenge = {
-                method: this.normalizeAuthMethod(response.challenge.method),
+                method: response.challenge.method,
                 auth_token: response.auth_token,
                 data: response.challenge.data
             };
@@ -135,7 +140,7 @@ export class SignInService {
         return this.canCreateCredential('totpkey');
     }
 
-    public useAuthenticationMethod(method: AuthMethod) {
+    public useAuthenticationMethod(method: DiscoveryAuthMethod) {
         if(this.user_signin_info?.allowed_methods.includes(method)) {
             this.navigateToAuthenticationMethod(method);
         }
@@ -179,7 +184,7 @@ export class SignInService {
         await this.continueAfterAuthentication();
     }
 
-    private selectInitialAuthMethod(user_signin_info: UserSignInInfo): AuthMethod {
+    private selectInitialAuthMethod(user_signin_info: UserSignInInfo): DiscoveryAuthMethod {
         if(user_signin_info.user_data.has_passkey && user_signin_info.allowed_methods.includes('passkey')) {
             return 'passkey';
         }
@@ -187,18 +192,18 @@ export class SignInService {
         return user_signin_info.allowed_methods[0] || 'pwd';
     }
 
-    private navigateToAuthenticationMethod(method: AuthMethod) {
+    private navigateToAuthenticationMethod(method: DiscoveryAuthMethod) {
         this.workflow_state$.next({ step: 'authentication-method', method });
         this.router.navigate([this.authentication_routes[method]]);
     }
 
     private navigateToChallenge(challenge: SignInChallenge) {
-        if(challenge.method === 'otp' && !this.user_signin_info?.user_data.has_totpkey && this.canCreateTotpkey()) {
+        if(challenge.method === 'totp' && !this.user_signin_info?.user_data.has_totpkey && this.canCreateTotpkey()) {
             this.router.navigate(['/signin/totpkey-create-first']);
             return;
         }
 
-        this.router.navigate([this.authentication_routes[challenge.method]]);
+        this.router.navigate([this.challenge_routes[challenge.method]]);
     }
 
     private canCreateCredential(credential: CredentialType): boolean {
@@ -211,7 +216,7 @@ export class SignInService {
             : this.user_signin_info.user_data.has_passkey;
 
         const method_enabled = credential === 'totpkey'
-            ? this.user_signin_info.methods_data?.otp?.enabled === true
+            ? this.user_signin_info.methods_data?.totp?.enabled === true
             : this.user_signin_info.allowed_methods.includes('passkey');
 
         return !has_credential
@@ -243,20 +248,6 @@ export class SignInService {
         this.workflow_state$.next({ step: 'redirect' });
         this.resetSignInContext(false);
         window.location.href = redirect_to;
-    }
-
-    private normalizeAuthMethod(method: string): AuthMethod {
-        if(method === 'password') {
-            return 'pwd';
-        }
-        if(method === 'totp') {
-            return 'otp';
-        }
-        if(method === 'pwd' || method === 'passkey' || method === 'otp') {
-            return method;
-        }
-
-        throw new Error(`Unsupported authentication method: ${method}`);
     }
 
     public recursiveBase64StrToArrayBuffer(obj: any) {

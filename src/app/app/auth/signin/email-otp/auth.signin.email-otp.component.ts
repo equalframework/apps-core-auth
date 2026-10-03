@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { AuthService } from 'sb-shared-lib';
 import { SignInService } from '../../../../services/sign-in.service';
 import { UserSignInInfo } from '../../../../type';
 
@@ -21,13 +19,11 @@ export class AuthSigninEmailOtpComponent implements OnInit {
     public expired_token: boolean = false;
     public email_otp_key_expired: boolean = false;
     public failed_attempts_reached: boolean = false;
-    public user_sign_in_info: UserSignInInfo|null = null;
-    public mfa_token: string = '';
+    public auth_code_digits: number = 6;
+    public user_signin_info: UserSignInInfo|null = null;
 
     constructor(
         private formBuilder: FormBuilder,
-        private auth: AuthService,
-        private router: Router,
         private signIn: SignInService
     ) {
         this.form = new FormGroup({});
@@ -39,25 +35,16 @@ export class AuthSigninEmailOtpComponent implements OnInit {
     }
 
     public async ngOnInit() {
-        this.signIn.user_sign_in_info$.subscribe((user_sign_in_info) => {
-            this.user_sign_in_info = user_sign_in_info;
-
-            let totp_conf: any = { digits: 6 };
-            if(this.user_sign_in_info?.methods_data?.totp) {
-                totp_conf = this.user_sign_in_info.methods_data.totp;
-            }
-
-            this.setUpForm(totp_conf);
-        });
-
-        this.signIn.mfa_token$.subscribe((mfa_token) => {
-            this.mfa_token = mfa_token;
+        this.signIn.user_signin_info$.subscribe((user_signin_info) => {
+            this.user_signin_info = user_signin_info;
+            this.auth_code_digits = this.user_signin_info?.methods_data?.email_otp?.digits ?? 6;
+            this.setUpForm(this.auth_code_digits);
         });
     }
 
-    private setUpForm(totp_conf: any) {
+    private setUpForm(digits: number) {
         this.form = <FormGroup>this.formBuilder.group({
-            auth_code: ['', [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${totp_conf.digits}}$`))]]
+            auth_code: ['', [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${digits}}$`))]]
         });
 
         this.form.get('auth_code').valueChanges.subscribe( () => {
@@ -76,11 +63,7 @@ export class AuthSigninEmailOtpComponent implements OnInit {
         this.loading = true;
 
         try {
-            await this.auth.authenticateWith('emailotp', { auth_code: this.f.auth_code.value }, this.mfa_token);
-
-            // success: we should be able to authenticate
-            this.auth.authenticate();
-            // SignIn service should now redirect to /apps
+            await this.signIn.authenticateWith('emailotp', { auth_code: this.f.auth_code.value });
         }
         catch(response:any) {
             if(response.hasOwnProperty('status')) {
@@ -115,7 +98,6 @@ export class AuthSigninEmailOtpComponent implements OnInit {
     }
 
     public onSwitchUser() {
-        // By setting user sign in info to null, the SignInService auto redirect to 'signin' to re-enter login
-        this.signIn.setUserSignInInfo(null);
+        this.signIn.resetSignInContext();
     }
 }

@@ -18,6 +18,7 @@ export class AuthSigninTotpComponent implements OnInit {
     public server_error: boolean = false;
     public expired_token: boolean = false;
     public failed_attempts_reached: boolean = false;
+    public auth_code_digits: number = 6;
     public user_signin_info: UserSignInInfo|null = null;
 
     constructor(
@@ -36,19 +37,15 @@ export class AuthSigninTotpComponent implements OnInit {
         this.signIn.user_signin_info$.subscribe((user_signin_info) => {
             this.user_signin_info = user_signin_info;
 
-            let totp_conf: any = { digits: 6 };
-            if(this.user_signin_info?.methods_data?.otp) {
-                totp_conf = this.user_signin_info.methods_data.otp;
-            }
-
-            this.setUpForm(totp_conf);
+            this.auth_code_digits = this.user_signin_info?.methods_data?.totp?.digits ?? 6;
+            this.setUpForm(this.auth_code_digits);
         });
 
     }
 
-    private setUpForm(totp_conf: any) {
+    private setUpForm(digits: number) {
         this.form = <FormGroup>this.formBuilder.group({
-            auth_code: ['', [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${totp_conf.digits}}$`))]]
+            auth_code: ['', [Validators.required, Validators.pattern(new RegExp(`^[0-9]{${digits}}$`))]]
         });
 
         this.form.get('auth_code').valueChanges.subscribe( () => {
@@ -67,11 +64,7 @@ export class AuthSigninTotpComponent implements OnInit {
         this.loading = true;
 
         try {
-            await this.signIn.authenticateWith('totp', { auth_code: this.f.auth_code.value }, this.mfa_token);
-
-            // success: we should be able to authenticate
-            this.signIn.authenticate();
-            // SignIn service should now redirect to /apps
+            await this.signIn.authenticateWith('totp', { auth_code: this.f.auth_code.value });
         }
         catch(response:any) {
             if(response.hasOwnProperty('status')) {

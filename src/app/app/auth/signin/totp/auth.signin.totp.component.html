@@ -12,7 +12,7 @@
                         <mat-label>{{'AUTH_SIGNIN_AUTH_CODE' | translate}}</mat-label>
                         <input matInput formControlName="auth_code" />
                         <mat-error *ngIf="f.auth_code.errors && !f.auth_code.errors?.pattern">{{'AUTH_ERROR_MISSING_AUTH_CODE' | translate}}</mat-error>
-                        <mat-error *ngIf="f.auth_code.errors && f.auth_code.errors?.pattern">{{'AUTH_ERROR_INVALID_AUTH_CODE' | translate : { digits: user_signin_info.methods_data.otp.digits } }}</mat-error>
+                        <mat-error *ngIf="f.auth_code.errors && f.auth_code.errors?.pattern">{{'AUTH_ERROR_INVALID_AUTH_CODE' | translate : { digits: auth_code_digits } }}</mat-error>
                     </mat-form-field>
                 </div>
 

@@ -49,7 +49,7 @@ export class AuthSigninTotpkeyCreateFirstComponent implements OnInit {
         });
 
         this.signIn.challenge$.subscribe((challenge) => {
-            this.auth_token = challenge?.method === 'otp' ? challenge.auth_token : '';
+            this.auth_token = challenge?.method === 'totp' ? challenge.auth_token : '';
         });
     }
 
